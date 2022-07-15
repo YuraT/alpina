@@ -1,0 +1,7 @@
+- hosts: docker_hosts
+  roles:
+    - docker_host
+    - traefik
+    - nextcloud
+    - role: gitea
+

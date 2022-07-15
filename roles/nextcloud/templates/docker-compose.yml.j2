@@ -1,0 +1,98 @@
+version: "3.9"
+
+networks:
+  default:
+  traefik_traefik:
+    external: true
+
+volumes:
+  nextcloud:
+  nextcloud_config:
+  nextcloud_data:
+  db:
+
+services:
+  app:
+    image: nextcloud:24-fpm-alpine
+    container_name: nextcloud_app
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env.nextcloud
+    networks:
+      - default
+    volumes:
+      - nextcloud:/var/www/html
+      - nextcloud_config:/var/www/html/config
+      - nextcloud_data:/var/www/html/data
+
+  cron:
+    image: nextcloud:24-fpm-alpine
+    container_name: nextcloud_cron
+    restart: unless-stopped
+    depends_on:
+      - app
+    entrypoint: /cron.sh
+    networks:
+      - default
+    volumes_from:
+      - app
+
+  notify_push:
+    image: nextcloud:24-fpm-alpine
+    container_name: nextcloud_notify_push
+    restart: unless-stopped
+    depends_on:
+      - app
+    entrypoint:
+      - /var/www/html/custom_apps/notify_push/bin/x86_64/notify_push
+      - /var/www/html/config/config.php
+    networks:
+      - default
+    volumes_from:
+      - app
+
+  db:
+    image: postgres:13-alpine
+    container_name: nextcloud_db
+    restart: unless-stopped
+    env_file:
+      - .env.db
+    networks:
+      - default
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: nextcloud_redis
+    restart: unless-stopped
+    env_file:
+      - .env.redis
+    networks:
+      - default
+    command:
+      - sh
+      - -c
+      - redis-server --requirepass $$REDIS_PASSWORD
+
+  web:
+    image: nginx:1.23-alpine
+    container_name: nextcloud_web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nextcloud.rule=Host(`nc.lab.cazzzer.com`)
+    restart: unless-stopped
+    links:
+      - app
+    ports:
+      - "8012:80"
+    networks:
+      - traefik_traefik
+      - default
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    volumes_from:
+      - app

@@ -1,0 +1,41 @@
+version: "3.9"
+
+networks:
+  default:
+  traefik_traefik:
+    external: true
+
+volumes:
+  gitea:
+  postgres:
+
+services:
+  server:
+    image: gitea/gitea:1.16.9
+    container_name: gitea_server
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gitea.rule=Host(`gitea.lab.cazzzer.com`)
+      - traefik.http.services.gitea.loadbalancer.server.port=3000
+    restart: unless-stopped
+    env_file:
+      - .env.gitea
+    networks:
+      - default
+      - traefik_traefik
+    volumes:
+      - gitea:/data
+    ports:
+      - "8011:3000"
+    depends_on:
+      - db
+  db:
+    image: postgres:14-alpine
+    container_name: gitea_db
+    restart: unless-stopped
+    env_file:
+      - .env.db
+    networks:
+      - default
+    volumes:
+      - postgres:/var/lib/postgresql/data

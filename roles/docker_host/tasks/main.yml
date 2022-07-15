@@ -1,0 +1,5 @@
+- name: Create my service directory
+  file:
+    state: directory
+    path: "{{ my_svc_path }}"
+    mode: "700"

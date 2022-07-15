@@ -1,0 +1,6 @@
+- hosts: all
+  roles:
+    - common
+
+- name: Install services
+  import_playbook: services.yml

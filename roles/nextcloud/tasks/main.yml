@@ -1,0 +1,33 @@
+# https://stackoverflow.com/questions/41667864/can-the-templates-module-handle-multiple-templates-directories
+
+- name: Ensure service directory exists
+  file:
+    path: "{{ current_svc_path }}"
+    state: directory
+    mode: "500"
+
+- name: Ensure directory structure exists
+  file:
+    path: "{{ current_svc_path }}/{{ item.path }}"
+    state: directory
+    mode: "500"
+  with_community.general.filetree: "{{ templates_source }}"
+  when: item.state == "directory"
+
+
+- name: Include app config variables
+  include_vars:
+    file: "{{ role_path }}/vars/app_config.yml"
+
+- name: Generate {{ current_svc_name }} deployment from templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ current_svc_path }}/{{ item.path | regex_replace('\\.j2$', '') }}"
+    mode: "400"
+  with_community.general.filetree: "{{ templates_source }}"
+  when: item.state == "file"
+
+- name: Deploy docker-compose for {{ current_svc_name }}
+  community.docker.docker_compose:
+    project_src: "{{ current_svc_path }}"
+    state: present
