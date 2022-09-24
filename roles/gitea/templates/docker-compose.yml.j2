@@ -11,11 +11,11 @@ volumes:
 
 services:
   server:
-    image: gitea/gitea:1.16.9
+    image: gitea/gitea:1.17.2
     container_name: gitea_server
     labels:
       - traefik.enable=true
-      - traefik.http.routers.gitea.rule=Host(`gitea.lab.cazzzer.com`)
+      - traefik.http.routers.gitea.rule=Host(`gitea.{{ domain }}`)
       - traefik.http.services.gitea.loadbalancer.server.port=3000
     restart: unless-stopped
     env_file:
@@ -25,8 +25,6 @@ services:
       - traefik_traefik
     volumes:
       - gitea:/data
-    ports:
-      - "8011:3000"
     depends_on:
       - db
   db:

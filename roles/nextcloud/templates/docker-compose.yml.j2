@@ -83,12 +83,10 @@ services:
     container_name: nextcloud_web
     labels:
       - traefik.enable=true
-      - traefik.http.routers.nextcloud.rule=Host(`nc.lab.cazzzer.com`)
+      - traefik.http.routers.nextcloud.rule=Host(`nc.{{ domain }}`)
     restart: unless-stopped
     links:
       - app
-    ports:
-      - "8012:80"
     networks:
       - traefik_traefik
       - default
