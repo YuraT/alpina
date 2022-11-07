@@ -1,7 +1,24 @@
 api:
   insecure: true
 
+log:
+  filePath: /logs/traefik.log
+  level: INFO
+accessLog:
+  filePath: /logs/access.log
+  bufferingSize: 100
+
+entryPoints:
+  web:
+    address: ":80"
+    forwardedHeaders:
+      trustedIPs:
+        - "172.16.0.0/12"
+
 providers:
   docker:
     exposedByDefault: false
     network: traefik_traefik
+  file:
+    directory: /rules
+    watch: true

@@ -3,9 +3,12 @@ version: "3.9"
 networks:
   traefik:
 
+volumes:
+  logs:
+
 services:
   traefik:
-    image: traefik:v2.8
+    image: traefik:v2.9
     container_name: traefik
     restart: unless-stopped
     ports:
@@ -16,5 +19,7 @@ services:
     networks:
       - traefik
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - logs:/logs
+      - {{ current_svc_path }}/rules:/rules:ro
