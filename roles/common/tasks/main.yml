@@ -38,6 +38,11 @@
     runlevel: sysinit
     enabled: yes
 
+- name: Enable docker service
+  service:
+    name: docker
+    enabled: yes
+
 - name: Reboot if needed
   reboot:
   when: apk_upgrades.changed or apk_installs.changed
