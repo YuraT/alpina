@@ -3,5 +3,6 @@
     - docker_host
     - traefik
     - nextcloud
-    - role: gitea
+    - jellyfin
+    - gitea
 

@@ -13,11 +13,17 @@ volumes:
     driver_opts:
       type: nfs
       o: "addr=truenas.lab.home,nfsvers=4,ro,noatime"
-      device: ":/mnt/Mass-Storage-New/JailStorage/Plex"
+      device: ":/mnt/Mass-Storage-New/JailStorage/Plex/media"
+  other_videos:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: "addr=truenas.lab.home,nfsvers=4,ro,noatime"
+      device: ":/mnt/Mass-Storage-New/syncThingData/Videos"
 
 services:
   jellyfin:
-    image: jellyfin/jellyfin:10.8.5
+    image: jellyfin/jellyfin:10.8.6
     container_name: jellyfin_jellyfin
     labels:
       - traefik.enable=true
@@ -33,3 +39,8 @@ services:
       - config:/config
       - cache:/cache
       - media:/data/media
+      - other_videos:/data/other_videos
+    tmpfs:
+      - /tmp/transcodes
+    devices:
+      - /dev/dri:/dev/dri
