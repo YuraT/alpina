@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "alpina"
+version = "0.1.0"
+description = ""
+authors = ["Iurii Tatishchev <itatishch@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+ansible = "^6.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
