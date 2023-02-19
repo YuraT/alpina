@@ -16,6 +16,7 @@
       - docker-fish-completion
       - docker-compose-fish-completion
       - zfs
+      - zfs-utils-py
     state: latest
     update_cache: yes
   register: apk_installs
