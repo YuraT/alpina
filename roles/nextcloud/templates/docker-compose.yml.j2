@@ -13,7 +13,7 @@ volumes:
 
 services:
   app:
-    image: nextcloud:24-fpm-alpine
+    image: nextcloud:${NEXTCLOUD_VERSION}
     container_name: nextcloud_app
     restart: unless-stopped
     depends_on:
@@ -29,7 +29,7 @@ services:
       - nextcloud_data:/var/www/html/data
 
   cron:
-    image: nextcloud:24-fpm-alpine
+    image: nextcloud:${NEXTCLOUD_VERSION}
     container_name: nextcloud_cron
     restart: unless-stopped
     depends_on:
@@ -41,7 +41,7 @@ services:
       - app
 
   notify_push:
-    image: nextcloud:24-fpm-alpine
+    image: nextcloud:${NEXTCLOUD_VERSION}
     container_name: nextcloud_notify_push
     restart: unless-stopped
     depends_on:
