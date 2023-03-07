@@ -31,3 +31,5 @@
   community.docker.docker_compose:
     project_src: "{{ current_svc_path }}"
     state: present
+    pull: true
+    remove_orphans: true
