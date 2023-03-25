@@ -5,7 +5,7 @@
     - nextcloud
     - jellyfin
     - gitea
-    - jackett
+    - arrstack
   post_tasks:
     - name: Docker prune objects
       docker_prune:

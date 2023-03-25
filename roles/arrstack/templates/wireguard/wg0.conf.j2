@@ -1,0 +1,11 @@
+# Stripped version of the wg config
+
+[Interface]
+PrivateKey = {{ wg_privkey }}
+# Address = {{ wg_address }}
+# DNS = {{ wg_dns }} # This is also used as the gateway address for NAT-PMP to work properly
+
+[Peer]
+PublicKey = {{ wg_peer_pubkey }}
+AllowedIPs = 0.0.0.0/0
+Endpoint = {{ wg_peer_endpoint }}

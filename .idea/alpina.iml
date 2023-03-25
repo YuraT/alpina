@@ -26,6 +26,8 @@
         <option value="$MODULE_DIR$/roles/traefik/templates" />
         <option value="$MODULE_DIR$/roles/gitea/templates" />
         <option value="$MODULE_DIR$/roles/nextcloud/templates" />
+        <option value="$MODULE_DIR$/roles/arrstack/templates" />
+        <option value="$MODULE_DIR$/roles/jellyfin/templates" />
       </list>
     </option>
   </component>

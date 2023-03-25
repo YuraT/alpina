@@ -1,13 +1,9 @@
-version: "3.9"
+version: "3.7"
 
 networks:
   default:
   traefik_traefik:
     external: true
-
-volumes:
-  gitea:
-  postgres:
 
 services:
   server:
@@ -24,7 +20,7 @@ services:
       - default
       - traefik_traefik
     volumes:
-      - gitea:/data
+      - {{ base_volume_path }}/gitea/gitea:/data
     depends_on:
       - db
   db:
@@ -36,4 +32,4 @@ services:
     networks:
       - default
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - {{ base_volume_path }}/gitea/postgres:/var/lib/postgresql/data

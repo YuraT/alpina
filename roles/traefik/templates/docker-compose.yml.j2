@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.7"
 
 networks:
   default:
@@ -7,9 +7,6 @@ networks:
     ipam:
       config:
         - subnet: {{ traefik_ip }}/24
-
-volumes:
-  logs:
 
 services:
   traefik:
@@ -32,5 +29,5 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
-      - logs:/logs
-      - {{ current_svc_path }}/rules:/rules:ro
+      - {{ base_volume_path }}/traefik/logs:/logs
+      - ./rules:/rules:ro

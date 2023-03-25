@@ -1,15 +1,10 @@
-version: "3.9"
+version: "3.7"
 
 networks:
   default:
   traefik_traefik:
     external: true
 
-volumes:
-  nextcloud:
-  nextcloud_config:
-  nextcloud_data:
-  db:
 
 services:
   app:
@@ -24,9 +19,9 @@ services:
     networks:
       - default
     volumes:
-      - nextcloud:/var/www/html
-      - nextcloud_config:/var/www/html/config
-      - nextcloud_data:/var/www/html/data
+      - {{ base_volume_path }}/nextcloud/nextcloud:/var/www/html
+      - {{ base_volume_path }}/nextcloud/nextcloud_config:/var/www/html/config
+      - {{ base_volume_path }}/nextcloud/nextcloud_data:/var/www/html/data
 
   cron:
     image: nextcloud:${NEXTCLOUD_VERSION}
@@ -37,8 +32,10 @@ services:
     entrypoint: /cron.sh
     networks:
       - default
-    volumes_from:
-      - app
+    volumes:
+      - {{ base_volume_path }}/nextcloud/nextcloud:/var/www/html
+      - {{ base_volume_path }}/nextcloud/nextcloud_config:/var/www/html/config
+      - {{ base_volume_path }}/nextcloud/nextcloud_data:/var/www/html/data
 
   notify_push:
     image: nextcloud:${NEXTCLOUD_VERSION}
@@ -51,8 +48,10 @@ services:
       - /var/www/html/config/config.php
     networks:
       - default
-    volumes_from:
-      - app
+    volumes:
+      - {{ base_volume_path }}/nextcloud/nextcloud:/var/www/html
+      - {{ base_volume_path }}/nextcloud/nextcloud_config:/var/www/html/config
+      - {{ base_volume_path }}/nextcloud/nextcloud_data:/var/www/html/data
 
   db:
     image: postgres:13-alpine
@@ -63,7 +62,7 @@ services:
     networks:
       - default
     volumes:
-      - db:/var/lib/postgresql/data
+      - {{ base_volume_path }}/nextcloud/db:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
@@ -91,6 +90,7 @@ services:
       - traefik_traefik
       - default
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    volumes_from:
-      - app
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - {{ base_volume_path }}/nextcloud/nextcloud:/var/www/html
+      - {{ base_volume_path }}/nextcloud/nextcloud_config:/var/www/html/config
+      - {{ base_volume_path }}/nextcloud/nextcloud_data:/var/www/html/data

@@ -1,49 +1,14 @@
-- name: Upgrade alpine packages
-  community.general.apk:
-    upgrade: yes
+- name: Upgrade Debian packages
+  become: yes
+  ansible.builtin.apt:
+    upgrade: dist
     update_cache: yes
-  register: apk_upgrades
-
-- name: Install alpine packages
-  community.general.apk:
-    name:
-      - qemu-guest-agent
-      - dhcpcd
-      - python3
-      - fish
-      - docker
-      - docker-compose
-      - docker-fish-completion
-      - docker-compose-fish-completion
-      - zfs
-      - zfs-utils-py
+    cache_valid_time: 3600
+    autoremove: yes
     state: latest
-    update_cache: yes
-  register: apk_installs
-
-- name: Enable qemu-guest-agent service
-  service:
-    name: qemu-guest-agent
-    runlevel: boot
-    enabled: yes
-
-- name: Enable zfs-import service
-  service:
-    name: zfs-import
-    runlevel: sysinit
-    enabled: yes
-
-- name: Enable zfs-mount service
-  service:
-    name: zfs-mount
-    runlevel: sysinit
-    enabled: yes
-
-- name: Enable docker service
-  service:
-    name: docker
-    enabled: yes
+  register: apt_upgrades
 
 - name: Reboot if needed
-  reboot:
-  when: apk_upgrades.changed or apk_installs.changed
+  become: yes
+  ansible.builtin.reboot:
+  when: apt_upgrades.changed
