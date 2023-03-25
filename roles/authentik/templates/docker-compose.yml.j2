@@ -1,0 +1,59 @@
+{% from "contrib/compose_helpers.j2" import traefik_labels with context %}
+{##}
+version: "3.7"
+
+networks:
+  default:
+  traefik_traefik:
+    external: true
+
+services:
+  server:
+    image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION}
+    container_name: authentik_server
+    labels:
+      - {{ traefik_labels("auth", port="9000") | indent(6) }}
+    restart: unless-stopped
+    command: server
+    env_file:
+      - .env.authentik
+    networks:
+      - default
+      - traefik_traefik
+
+  worker:
+    image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION}
+    container_name: authentik_worker
+    restart: unless-stopped
+    command: worker
+    env_file:
+      - .env.authentik
+    volumes:
+      - {{ base_volume_path }}/authentik/certs:/certs
+
+  postgres:
+    image: postgres:12-alpine
+    container_name: authentik_postgres
+    restart: unless-stopped
+    env_file:
+      - .env.db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - {{ base_volume_path }}/authentik/postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    container_name: authentik_redis
+    restart: unless-stopped
+    command: --save 60 1 --loglevel warning
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
