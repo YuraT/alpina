@@ -1,7 +1,12 @@
 version: "3.9"
 
 networks:
+  default:
   traefik:
+    internal: true
+    ipam:
+      config:
+        - subnet: {{ traefik_ip }}/24
 
 volumes:
   logs:
@@ -10,6 +15,10 @@ services:
   traefik:
     image: traefik:v2.9
     container_name: traefik
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.rule=Host(`traefik.{{ domain }}`)
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
     restart: unless-stopped
     ports:
       - "80:80"
@@ -17,7 +26,9 @@ services:
     env_file:
       - .env.traefik
     networks:
-      - traefik
+      default:
+      traefik:
+        ipv4_address: {{ traefik_ip }}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro

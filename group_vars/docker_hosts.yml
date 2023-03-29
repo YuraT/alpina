@@ -1,2 +1,6 @@
 ---
 my_svc_path: ~/services
+base_volume_path: /mnt/dock
+media_volume_path: /mnt/media
+
+traefik_ip: 172.16.122.254
