@@ -1,0 +1,17 @@
+{% macro traefik_labels(host, service="", port="") %}
+traefik.enable=true
+- traefik.http.routers.{{ host }}.rule=Host(`{{ host }}.{{ domain }}`)
+- traefik.http.routers.{{ host }}.entrypoints=web
+- traefik.http.routers.{{ host }}-tls.rule=Host(`{{ host }}.{{ domain }}`)
+- traefik.http.routers.{{ host }}-tls.entrypoints=websecure
+- traefik.http.routers.{{ host }}-tls.tls=true
+- traefik.http.routers.{{ host }}-tls.tls.certresolver=letsencrypt
+- traefik.http.routers.{{ host }}-tls.tls.domains.0.main={{ domain }}
+- traefik.http.routers.{{ host }}-tls.tls.domains.0.sans=*.{{ domain }}
+{% if service -%}
+- traefik.http.routers.{{ host }}.service={{ service }}
+{%- endif %}
+{% if port -%}
+- traefik.http.services.{{ host }}.loadbalancer.server.port={{ port }}
+{%- endif %}
+{%- endmacro %}

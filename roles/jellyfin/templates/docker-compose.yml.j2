@@ -1,3 +1,5 @@
+{% from "contrib/compose_helpers.j2" import traefik_labels with context %}
+{##}
 version: "3.7"
 
 networks:
@@ -10,9 +12,7 @@ services:
     image: jellyfin/jellyfin:10.8.6
     container_name: jellyfin_jellyfin
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.jellyfin.rule=Host(`jellyfin.{{ domain }}`)
-      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
+      - {{ traefik_labels("jellyfin", port="8096") | indent(6) }}
     restart: unless-stopped
     env_file:
       - .env.jellyfin

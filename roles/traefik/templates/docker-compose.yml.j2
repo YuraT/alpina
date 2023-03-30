@@ -1,3 +1,5 @@
+{% from "contrib/compose_helpers.j2" import traefik_labels with context %}
+{##}
 version: "3.7"
 
 networks:
@@ -13,12 +15,11 @@ services:
     image: traefik:v2.9
     container_name: traefik
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.traefik.rule=Host(`traefik.{{ domain }}`)
-      - traefik.http.services.traefik.loadbalancer.server.port=8080
+      - {{ traefik_labels("traefik", service="api@internal") | indent(6) }}
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
       - "8080:8080"
     env_file:
       - .env.traefik
@@ -29,5 +30,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - {{ base_volume_path }}/traefik/rules:/rules:ro
       - {{ base_volume_path }}/traefik/logs:/logs
-      - ./rules:/rules:ro
+      - {{ base_volume_path }}/traefik/acme:/acme

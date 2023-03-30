@@ -14,6 +14,22 @@ entryPoints:
     forwardedHeaders:
       trustedIPs:
         - "172.16.0.0/12"
+  websecure:
+    address: ":443"
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: {{ acme_email }}
+      storage: "/acme/acme.json"
+      keyType: "EC384"
+      dnsChallenge:
+        provider: "cloudflare"
+        delayBeforeCheck: 10
+        resolvers:
+          - 1.1.1.1
+          - 8.8.8.8
+          - 9.9.9.9
 
 providers:
   docker:

@@ -1,3 +1,5 @@
+{% from "contrib/compose_helpers.j2" import traefik_labels with context %}
+{##}
 version: "3.7"
 
 networks:
@@ -81,8 +83,7 @@ services:
     image: nginx:1.23-alpine
     container_name: nextcloud_web
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.nextcloud.rule=Host(`nc.{{ domain }}`)
+      - {{ traefik_labels("nc") | indent(6) }}
     restart: unless-stopped
     links:
       - app
