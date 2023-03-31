@@ -12,7 +12,9 @@
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="roles/traefik/templates/traefik.yml.j2" />
+                    <option name="pattern" value="true" />
+                    <option name="path" value="*/traefik.yml.j2" />
+                    <option name="mappingKind" value="Pattern" />
                   </Item>
                 </list>
               </option>
@@ -25,15 +27,6 @@
               <option name="generatedName" value="New Schema" />
               <option name="name" value="Traefik v2 File Provider" />
               <option name="relativePathToSchema" value="https://json.schemastore.org/traefik-v2-file-provider.json" />
-              <option name="patterns">
-                <list>
-                  <Item>
-                    <option name="directory" value="true" />
-                    <option name="path" value="roles/traefik/templates/rules" />
-                    <option name="mappingKind" value="Directory" />
-                  </Item>
-                </list>
-              </option>
             </SchemaInfo>
           </value>
         </entry>
@@ -46,7 +39,9 @@
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="roles/traefik/templates/docker-compose.yml.j2" />
+                    <option name="pattern" value="true" />
+                    <option name="path" value="*/docker-compose.yml.j2" />
+                    <option name="mappingKind" value="Pattern" />
                   </Item>
                 </list>
               </option>

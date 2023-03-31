@@ -27,19 +27,19 @@ services:
       - {{ media_volume_path }}/Plex:/media/Plex
       - {{ media_volume_path }}/iso-img:/media/iso-img
 
-  jackett:
-    image: linuxserver/jackett:latest
-    container_name: jackett
+  prowlarr:
+    image: linuxserver/prowlarr:latest
+    container_name: prowlarr
     labels:
-      - {{ traefik_labels("jackett", port="9117") | indent(6) }}
+      - {{ traefik_labels("prowlarr", port="9696") | indent(6) }}
     restart: unless-stopped
+    depends_on:
+      - qbittorrent
     networks:
       - default
       - traefik_traefik
     volumes:
-      - {{ base_volume_path }}/arrstack/config/jackett:/config
-      - {{ base_volume_path }}/arrstack/downloads:/downloads
-      - {{ media_volume_path }}/Plex:/media/Plex
+      - {{ base_volume_path }}/arrstack/config/prowlarr:/config
 
   sonarr:
     image: linuxserver/sonarr:latest
@@ -49,7 +49,6 @@ services:
     restart: unless-stopped
     depends_on:
       - qbittorrent
-      - jackett
     networks:
       - default
       - traefik_traefik
@@ -66,7 +65,6 @@ services:
     restart: unless-stopped
     depends_on:
       - qbittorrent
-      - jackett
     networks:
       - default
       - traefik_traefik
