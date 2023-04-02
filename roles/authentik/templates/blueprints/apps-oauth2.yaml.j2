@@ -1,0 +1,51 @@
+version: 1
+metadata:
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+  name: Alpina - OAuth2 Apps
+entries:
+  {% set apps = {
+    "Gitea": {
+      "redirect_uris": "https://gitea."~ domain ~"/user/oauth2/Authentik/callback",
+      "icon": "https://gitea."~ domain ~"/assets/img/logo.svg",
+    },
+    "Nextcloud": {
+      "redirect_uris": "https://nc."~ domain ~"/apps/sociallogin/custom_oidc/authentik",
+      "icon": "https://nc."~ domain ~"/apps/theming/favicon",
+    },
+  } -%}
+  {% for app in apps.keys() -%}
+  - identifiers:
+      name: {{ app }}
+    model: authentik_providers_oauth2.oauth2provider
+    id: {{ app | lower }}
+    attrs:
+      access_code_validity: minutes=1
+      access_token_validity: minutes=5
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      issuer_mode: per_provider
+      sub_mode: hashed_user_id
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, openid]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, email]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, profile]]
+      redirect_uris: {{ apps[app]["redirect_uris"] }}
+      refresh_token_validity: days=30
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
+
+  - identifiers:
+      slug: {{ app | lower }}
+    model: authentik_core.application
+    id: {{ app | lower }}
+    attrs:
+      name: {{ app }}
+      group: "Apps"
+      meta_description: "Hello, I'm {{ app }}!"
+      meta_publisher: Alpina
+      # This isn't supported yet, https://github.com/goauthentik/authentik/issues/3484
+      # meta_icon: "{{ apps[app]["icon"] }}"
+      open_in_new_tab: true
+      policy_engine_mode: any
+      provider: !KeyOf {{ app | lower }}
+  {% endfor %}

@@ -1,0 +1,19 @@
+version: 1
+metadata:
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+  name: Alpina - Default Identification Stage
+entries:
+  - identifiers:
+      name: default-authentication-identification
+    model: authentik_stages_identification.identificationstage
+    attrs:
+      sources:
+        - !Find [authentik_core.source, [slug, authentik-built-in]]
+        - !Find [authentik_sources_oauth.oauthsource, [slug, github]]
+
+  - identifiers:
+      slug: default-authentication-flow
+    model: authentik_flows.flow
+    attrs:
+      compatibility_mode: true

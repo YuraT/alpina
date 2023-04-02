@@ -1,0 +1,25 @@
+version: 1
+metadata:
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+  name: Alpina - GitHub OAuth
+entries:
+  - identifiers:
+      slug: github
+    model: authentik_sources_oauth.oauthsource
+    attrs:
+      name: GitHub
+      slug: github
+      access_token_url: https://github.com/login/oauth/access_token
+      additional_scopes: openid read:org
+      authentication_flow: !Find [authentik_flows.flow, [slug, default-source-authentication]]
+      authorization_url: https://github.com/login/oauth/authorize
+      consumer_key: {{ github_consumer_key }}
+      consumer_secret: {{ github_consumer_secret }}
+      enabled: true
+      enrollment_flow: !Find [authentik_flows.flow, [slug, default-source-enrollment]]
+      policy_engine_mode: any
+      profile_url: https://api.github.com/user
+      provider_type: github
+      user_matching_mode: email_link
+      user_path_template: goauthentik.io/sources/%(slug)s

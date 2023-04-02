@@ -1,0 +1,65 @@
+version: 1
+metadata:
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+  name: Alpina - Arrstack Proxy
+entries:
+  - identifiers:
+      name: arrstack
+    model: authentik_core.group
+    id: arrstack
+
+  {% for service in ["qBit", "Prowlarr", "Sonarr", "Radarr"] -%}
+  - identifiers:
+      name: {{ service }}
+    model: authentik_providers_proxy.proxyprovider
+    id: {{ service | lower }}
+    attrs:
+      access_token_validity: hours=24
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      certificate: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
+      intercept_header_auth: true
+      external_host: https://{{ service | lower }}.{{ domain }}/
+      mode: forward_single
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, openid]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, email]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, profile]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, ak_proxy]]
+      refresh_token_validity: days=30
+      skip_path_regex: {{ "/images/qbittorrent-tray.svg" if service == "qBit" else "/Content/Images/logo.svg" }}
+
+  - identifiers:
+      slug: {{ service | lower }}
+    model: authentik_core.application
+    id: {{ service | lower }}
+    attrs:
+      name: {{ service }}
+      group: "Arrstack"
+      meta_description: "Hello, I'm {{ service }}!"
+      meta_publisher: Alpina
+      # This isn't supported yet, https://github.com/goauthentik/authentik/issues/3484
+      # meta_icon: "https://{{ service }}.{{ domain }}/Content/Images/logo.svg"
+      open_in_new_tab: true
+      policy_engine_mode: any
+      provider: !KeyOf {{ service | lower }}
+
+  - identifiers:
+      group: !KeyOf arrstack
+      target: !Find [authentik_core.application, [slug, {{ service | lower }}]]
+    model: authentik_policies.policybinding
+    attrs:
+      enabled: true
+      order: 0
+      timeout: 30
+  {% endfor %}
+
+  - identifiers:
+      managed: goauthentik.io/outposts/embedded
+      name: authentik Embedded Outpost
+    model: authentik_outposts.outpost
+    attrs:
+      providers:
+      {% for service in ["qBit", "Prowlarr", "Sonarr", "Radarr"] -%}
+        - !KeyOf {{ service | lower }}
+      {% endfor %}

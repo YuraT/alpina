@@ -1,4 +1,4 @@
-{% macro traefik_labels(host, service="", port="") %}
+{% macro traefik_labels(host, service="", port="", auth=false) %}
 traefik.enable=true
 - traefik.http.routers.{{ host }}.rule=Host(`{{ host }}.{{ domain }}`)
 - traefik.http.routers.{{ host }}.entrypoints=web
@@ -10,8 +10,11 @@ traefik.enable=true
 - traefik.http.routers.{{ host }}-tls.tls.domains.0.sans=*.{{ domain }}
 {% if service -%}
 - traefik.http.routers.{{ host }}.service={{ service }}
-{%- endif %}
+{% endif %}
 {% if port -%}
 - traefik.http.services.{{ host }}.loadbalancer.server.port={{ port }}
-{%- endif %}
-{%- endmacro %}
+{% endif %}
+{% if auth -%}
+- traefik.http.routers.{{ host }}-tls.middlewares=authentik@docker
+{% endif %}
+{% endmacro %}

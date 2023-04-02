@@ -14,7 +14,7 @@ services:
     cap_add:
       - NET_ADMIN
     labels:
-      - {{ traefik_labels("qbit", port="8080") | indent(6) }}
+      - {{ traefik_labels("qbit", port="8080", auth=true) | indent(6) }}
     restart: unless-stopped
     networks:
       - default
@@ -31,7 +31,7 @@ services:
     image: linuxserver/prowlarr:latest
     container_name: prowlarr
     labels:
-      - {{ traefik_labels("prowlarr", port="9696") | indent(6) }}
+      - {{ traefik_labels("prowlarr", port="9696", auth=true) | indent(6) }}
     restart: unless-stopped
     depends_on:
       - qbittorrent
@@ -45,7 +45,7 @@ services:
     image: linuxserver/sonarr:latest
     container_name: sonarr
     labels:
-      - {{ traefik_labels("sonarr", port="8989") | indent(6) }}
+      - {{ traefik_labels("sonarr", port="8989", auth=true) | indent(6) }}
     restart: unless-stopped
     depends_on:
       - qbittorrent
@@ -61,7 +61,7 @@ services:
     image: linuxserver/radarr:latest
     container_name: radarr
     labels:
-      - {{ traefik_labels("radarr", port="7878") | indent(6) }}
+      - {{ traefik_labels("radarr", port="7878", auth=true) | indent(6) }}
     restart: unless-stopped
     depends_on:
       - qbittorrent
