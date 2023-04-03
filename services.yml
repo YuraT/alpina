@@ -2,6 +2,7 @@
   roles:
     - docker_host
     - traefik
+    - authentik
     - nextcloud
     - jellyfin
     - gitea
