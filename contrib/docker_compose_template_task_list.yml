@@ -28,8 +28,12 @@
   when: item.state == "file"
 
 - name: Deploy docker-compose for {{ current_svc_name }}
-  community.docker.docker_compose:
-    project_src: "{{ current_svc_path }}"
-    state: present
-    pull: true
-    remove_orphans: true
+  command: docker compose -f "{{ current_svc_path }}/docker-compose.yml" up -d --pull --remove-orphans
+  register: docker_compose_output
+  # Not perfect idempotency, but the built-in docker_compose module doesn't support docker-compose v2
+  # And of course there's an IPv6 bug in docker-compose v1, smh
+  # https://github.com/docker/compose/issues/7670
+  changed_when: "'created' in docker_compose_output.stderr.lower()"
+
+- debug:
+    var: docker_compose_output

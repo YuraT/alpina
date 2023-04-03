@@ -1,4 +1,6 @@
 .POSIX:
+.PHONY: *
+.EXPORT_ALL_VARIABLES:
 
 env ?= staging
 vault_id ?= alpina@contrib/rbw-client.sh

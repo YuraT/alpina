@@ -1,35 +1,37 @@
-{% from "contrib/compose_helpers.j2" import traefik_labels with context %}
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
 {##}
-version: "3.7"
+version: "3.9"
 
 networks:
-  default:
   traefik:
     internal: true
+    enable_ipv6: true
     ipam:
       config:
         - subnet: {{ traefik_ip }}/24
+        - subnet: {{ docker_ipv6_subnet | ansible.utils.ipsubnet(80, 255) }}
 
 services:
   traefik:
     image: traefik:v2.9
     container_name: traefik
-    labels:
-      - {{ traefik_labels("traefik", service="api@internal") | indent(6) }}
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-      - "8080:8080"
     env_file:
       - .env.traefik
-    networks:
-      default:
-      traefik:
-        ipv4_address: {{ traefik_ip }}
+    network_mode: host
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
-      - {{ base_volume_path }}/traefik/rules:/rules:ro
+      - ./rules:/rules:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - {{ base_volume_path }}/traefik/rules:/rules/extra:ro
       - {{ base_volume_path }}/traefik/logs:/logs
       - {{ base_volume_path }}/traefik/acme:/acme
+
+  # This is mostly just so that the traefik network gets created
+  whoami:
+    image: containous/whoami
+    container_name: whoami
+    labels:
+      - {{ helpers.traefik_labels('whoami', port=80) | indent(6) }}
+    networks:
+      - traefik

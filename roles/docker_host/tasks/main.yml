@@ -3,3 +3,31 @@
     state: directory
     path: "{{ my_svc_path }}"
     mode: "700"
+
+- name: Get IPv6 subnet for Docker
+  set_fact:
+    docker_ipv6_subnet: "{{ \
+      ansible_default_ipv6.address \
+      | ansible.utils.ipsubnet(64) \
+      | ansible.utils.ipsubnet(72, docker_ipv6_index) \
+    }}"
+
+- debug:
+    var: docker_ipv6_subnet
+
+- name: Configure Docker daemon
+  become: yes
+  template:
+    src: "daemon.json.j2"
+    dest: "/etc/docker/daemon.json"
+    owner: root
+    group: root
+    mode: "0644"
+  register: docker_daemon_config
+
+- name: Restart Docker daemon
+  become: yes
+  service:
+    name: docker
+    state: restarted
+  when: docker_daemon_config.changed

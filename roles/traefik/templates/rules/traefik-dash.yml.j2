@@ -1,0 +1,25 @@
+http:
+  routers:
+    traefik-dash:
+      rule: "Host(`traefik.{{ domain }}`)"
+      entryPoints:
+        - web
+      service: traefik-dash
+
+    traefik-dash-tls:
+      rule: "Host(`traefik.{{ domain }}`)"
+      entryPoints:
+        - websecure
+      service: traefik-dash
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: "{{ domain }}"
+            sans:
+              - "*.{{ domain }}"
+
+  services:
+    traefik-dash:
+      loadBalancer:
+        servers:
+          - url: "http://localhost:8080"

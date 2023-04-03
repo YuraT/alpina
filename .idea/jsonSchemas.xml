@@ -3,6 +3,24 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
+        <entry key="Ansible Tasks File">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="Ansible Tasks File" />
+              <option name="relativePathToSchema" value="https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/tasks" />
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="pattern" value="true" />
+                    <option name="path" value="*/tasks/*.yml" />
+                    <option name="mappingKind" value="Pattern" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="Traefik v2">
           <value>
             <SchemaInfo>
@@ -45,6 +63,11 @@
               <option name="applicationDefined" value="true" />
               <option name="patterns">
                 <list>
+                  <Item>
+                    <option name="pattern" value="true" />
+                    <option name="path" value="*/docker-compose.yml" />
+                    <option name="mappingKind" value="Pattern" />
+                  </Item>
                   <Item>
                     <option name="pattern" value="true" />
                     <option name="path" value="*/docker-compose.yml.j2" />

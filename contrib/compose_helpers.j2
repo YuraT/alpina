@@ -1,3 +1,11 @@
+{% macro default_network(subnet_index) %}
+default:
+  enable_ipv6: true
+  ipam:
+    config:
+      - subnet: {{ docker_ipv6_subnet | ansible.utils.ipsubnet(80, subnet_index) }}
+{% endmacro %}
+
 {% macro traefik_labels(host, service="", port="", auth=false) %}
 traefik.enable=true
 - traefik.http.routers.{{ host }}.rule=Host(`{{ host }}.{{ domain }}`)

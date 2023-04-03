@@ -1,3 +1,12 @@
+- name: Install Debian packages
+  become: yes
+  ansible.builtin.apt:
+    name:
+     - docker-ce
+     - docker-compose-plugin
+     - ufw
+    state: latest
+
 - name: Upgrade Debian packages
   become: yes
   ansible.builtin.apt:
@@ -7,6 +16,26 @@
     autoremove: yes
     state: latest
   register: apt_upgrades
+
+- name: Allow SSH
+  become: yes
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: Allow Web
+  become: yes
+  ufw:
+    rule: allow
+    name: WWW Full
+
+- name: Enable Firewall
+  become: yes
+  ufw:
+    state: enabled
+    policy: reject
+    direction: incoming
+    logging: on
 
 - name: Reboot if needed
   become: yes
