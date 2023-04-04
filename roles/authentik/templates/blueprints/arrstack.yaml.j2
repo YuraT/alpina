@@ -8,6 +8,9 @@ entries:
       name: arrstack
     model: authentik_core.group
     id: arrstack
+    attrs:
+      arrstack_username: "arr"
+      arrstack_password: "{{ arrstack_password }}"
 
   {% for service in ["qBit", "Prowlarr", "Sonarr", "Radarr"] -%}
   - identifiers:
@@ -18,6 +21,11 @@ entries:
       access_token_validity: hours=24
       authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
       certificate: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
+      {% if service != 'qBit' -%}
+      basic_auth_enabled: true
+      basic_auth_user_attribute: arrstack_username
+      basic_auth_password_attribute: arrstack_password
+      {% endif -%}
       intercept_header_auth: true
       external_host: https://{{ service | lower }}.{{ domain }}/
       mode: forward_single
