@@ -1,9 +1,9 @@
-{% from "contrib/compose_helpers.j2" import traefik_labels with context %}
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
 {##}
-version: "3.7"
+version: "3.9"
 
 networks:
-  default:
+  {{ helpers.default_network(250) | indent(2) }}
   traefik_traefik:
     external: true
 
@@ -12,7 +12,7 @@ services:
     image: jellyfin/jellyfin:10.8.6
     container_name: jellyfin_jellyfin
     labels:
-      - {{ traefik_labels("jellyfin", port="8096") | indent(6) }}
+      - {{ helpers.traefik_labels('jellyfin', port='8096') | indent(6) }}
     restart: unless-stopped
     env_file:
       - .env.jellyfin

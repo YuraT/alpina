@@ -4,7 +4,7 @@
     name:
      - docker-ce
      - docker-compose-plugin
-     - ufw
+     - firewalld
     state: latest
 
 - name: Upgrade Debian packages
@@ -19,23 +19,41 @@
 
 - name: Allow SSH
   become: yes
-  ufw:
-    rule: allow
-    name: OpenSSH
+  firewalld:
+    service: ssh
+    permanent: yes
+    state: enabled
+    immediate: yes
 
 - name: Allow Web
   become: yes
-  ufw:
-    rule: allow
-    name: WWW Full
+  firewalld:
+    service: http
+    permanent: yes
+    state: disabled
+    immediate: yes
+
+- name: Allow Web Secure
+  become: yes
+  firewalld:
+    service: https
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- name: Allow 443 udp for http3
+  become: yes
+  firewalld:
+    port: 443/udp
+    permanent: yes
+    state: enabled
+    immediate: yes
 
 - name: Enable Firewall
   become: yes
-  ufw:
+  firewalld:
     state: enabled
-    policy: reject
-    direction: incoming
-    logging: on
+    immediate: yes
 
 - name: Reboot if needed
   become: yes

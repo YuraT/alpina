@@ -25,9 +25,19 @@
     mode: "0644"
   register: docker_daemon_config
 
+- name: Remove docker0 from firewalld trusted zone
+  become: yes
+  firewalld:
+    zone: trusted
+    interface: docker0
+    permanent: yes
+    immediate: yes
+    state: disabled
+  register: docker0_firewalld
+
 - name: Restart Docker daemon
   become: yes
   service:
     name: docker
     state: restarted
-  when: docker_daemon_config.changed
+  when: docker_daemon_config.changed or docker0_firewalld.changed

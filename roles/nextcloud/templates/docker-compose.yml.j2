@@ -1,9 +1,9 @@
-{% from "contrib/compose_helpers.j2" import traefik_labels with context %}
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
 {##}
-version: "3.7"
+version: "3.9"
 
 networks:
-  default:
+  {{ helpers.default_network(251) | indent(2) }}
   traefik_traefik:
     external: true
 
@@ -83,7 +83,7 @@ services:
     image: nginx:1.23-alpine
     container_name: nextcloud_web
     labels:
-      - {{ traefik_labels("nc") | indent(6) }}
+      - {{ helpers.traefik_labels('nc') | indent(6) }}
     restart: unless-stopped
     links:
       - app

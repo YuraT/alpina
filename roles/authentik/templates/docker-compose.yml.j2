@@ -1,9 +1,9 @@
-{% from "contrib/compose_helpers.j2" import traefik_labels with context %}
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
 {##}
-version: "3.7"
+version: "3.9"
 
 networks:
-  default:
+  {{ helpers.default_network(253) | indent(2) }}
   traefik_traefik:
     external: true
 
@@ -12,11 +12,14 @@ services:
     image: ghcr.io/goauthentik/server:${AUTHENTIK_VERSION}
     container_name: authentik_server
     labels:
-      - {{ traefik_labels("auth", port="9000") | indent(6) }}
-      - traefik.http.middlewares.authentik.forwardauth.address=http://authentik_server:9000/outpost.goauthentik.io/auth/traefik
+      - {{ helpers.traefik_labels('auth', port='9000') | indent(6) }}
+      - traefik.http.middlewares.authentik.forwardauth.address=http://localhost:9000/outpost.goauthentik.io/auth/traefik
       - traefik.http.middlewares.authentik.forwardauth.trustForwardHeader=true
       - traefik.http.middlewares.authentik.forwardauth.authResponseHeaders=X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid,X-authentik-jwt,X-authentik-meta-jwks,X-authentik-meta-outpost,X-authentik-meta-provider,X-authentik-meta-app,X-authentik-meta-version
     restart: unless-stopped
+    # Port forward is needed because traefik can't resolve the container name from the host network
+    ports:
+      - "9000:9000"
     command: server
     env_file:
       - .env.authentik
@@ -61,3 +64,5 @@ services:
       interval: 30s
       retries: 5
       timeout: 3s
+    volumes:
+      - {{ base_volume_path }}/authentik/redis:/data

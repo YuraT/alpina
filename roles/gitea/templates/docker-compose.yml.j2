@@ -1,9 +1,9 @@
-{% from "contrib/compose_helpers.j2" import traefik_labels with context %}
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
 {##}
-version: "3.7"
+version: "3.9"
 
 networks:
-  default:
+  {{ helpers.default_network(252) | indent(2) }}
   traefik_traefik:
     external: true
 
@@ -12,7 +12,7 @@ services:
     image: gitea/gitea:1.18
     container_name: gitea_server
     labels:
-      - {{ traefik_labels("gitea", port="3000") | indent(6) }}
+      - {{ helpers.traefik_labels('gitea', port='3000') | indent(6) }}
     restart: unless-stopped
     env_file:
       - .env.gitea

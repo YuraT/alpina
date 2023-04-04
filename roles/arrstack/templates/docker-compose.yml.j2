@@ -1,9 +1,11 @@
-{% from "contrib/compose_helpers.j2" import traefik_labels with context %}
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
 {##}
-version: "3.7"
+version: "3.9"
 
 networks:
-  default:
+{#  {{ helpers.default_network(249) | indent(2) }}#}
+  # TODO: Figure out IPv6 leaks
+  ipv4_only:
   traefik_traefik:
     external: true
 
@@ -14,10 +16,13 @@ services:
     cap_add:
       - NET_ADMIN
     labels:
-      - {{ traefik_labels("qbit", port="8080", auth=true) | indent(6) }}
+      - {{ helpers.traefik_labels('qbit', port='8080', auth=true) | indent(6) }}
     restart: unless-stopped
+    environment:
+      - DOCKER_MODS=linuxserver/mods:universal-package-install
+      - INSTALL_PACKAGES=wireguard-tools-wg
     networks:
-      - default
+      - ipv4_only
       - traefik_traefik
     volumes:
       - ./wireguard:/etc/wireguard:ro
@@ -31,12 +36,12 @@ services:
     image: linuxserver/prowlarr:latest
     container_name: prowlarr
     labels:
-      - {{ traefik_labels("prowlarr", port="9696", auth=true) | indent(6) }}
+      - {{ helpers.traefik_labels('prowlarr', port='9696', auth=true) | indent(6) }}
     restart: unless-stopped
     depends_on:
       - qbittorrent
     networks:
-      - default
+      - ipv4_only
       - traefik_traefik
     volumes:
       - {{ base_volume_path }}/arrstack/config/prowlarr:/config
@@ -45,12 +50,12 @@ services:
     image: linuxserver/sonarr:latest
     container_name: sonarr
     labels:
-      - {{ traefik_labels("sonarr", port="8989", auth=true) | indent(6) }}
+      - {{ helpers.traefik_labels('sonarr', port='8989', auth=true) | indent(6) }}
     restart: unless-stopped
     depends_on:
       - qbittorrent
     networks:
-      - default
+      - ipv4_only
       - traefik_traefik
     volumes:
       - {{ base_volume_path }}/arrstack/config/sonarr:/config
@@ -61,12 +66,12 @@ services:
     image: linuxserver/radarr:latest
     container_name: radarr
     labels:
-      - {{ traefik_labels("radarr", port="7878", auth=true) | indent(6) }}
+      - {{ helpers.traefik_labels('radarr', port='7878', auth=true) | indent(6) }}
     restart: unless-stopped
     depends_on:
       - qbittorrent
     networks:
-      - default
+      - ipv4_only
       - traefik_traefik
     volumes:
       - {{ base_volume_path }}/arrstack/config/radarr:/config

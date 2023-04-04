@@ -3,9 +3,9 @@
     - docker_host
     - traefik
     - authentik
+    - gitea
     - nextcloud
     - jellyfin
-    - gitea
     - arrstack
   post_tasks:
     - name: Docker prune objects

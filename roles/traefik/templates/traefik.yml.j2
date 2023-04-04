@@ -8,12 +8,16 @@ accessLog:
   filePath: /logs/access.log
   bufferingSize: 100
 
+experimental:
+  http3: true
+
 entryPoints:
   web:
     address: ":80"
-
   websecure:
     address: ":443"
+    http3:
+      advertisedPort: 443
 
 certificatesResolvers:
   letsencrypt:
