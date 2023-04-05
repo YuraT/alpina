@@ -1,0 +1,23 @@
+- name: Ensure alpina directory exists
+  file:
+    state: directory
+    path: "{{ my_svc_path }}"
+    mode: "700"
+
+- name: Deploy collection services
+  vars:
+    collection: services
+    stacks:
+      - traefik
+      - authentik
+  import_tasks: deploy_collection.yml
+
+- name: Deploy collection apps
+  vars:
+    collection: apps
+    stacks:
+      - gitea
+      - nextcloud
+      - jellyfin
+      - arrstack
+  import_tasks: deploy_collection.yml

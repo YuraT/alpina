@@ -23,11 +23,6 @@
     <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/roles/traefik/templates" />
-        <option value="$MODULE_DIR$/roles/gitea/templates" />
-        <option value="$MODULE_DIR$/roles/nextcloud/templates" />
-        <option value="$MODULE_DIR$/roles/arrstack/templates" />
-        <option value="$MODULE_DIR$/roles/jellyfin/templates" />
         <option value="$MODULE_DIR$/roles/docker_host/templates" />
       </list>
     </option>

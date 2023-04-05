@@ -1,5 +1,0 @@
----
-current_svc_name: gitea
-current_svc_path: "{{ my_svc_path }}/{{ current_svc_name }}"
-
-templates_source: "{{ role_path }}/templates"

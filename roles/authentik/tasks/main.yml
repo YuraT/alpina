@@ -1,2 +1,0 @@
-- name: "Docker compose steps for {{ current_svc_name }}"
-  import_tasks: "{{ playbook_dir }}/contrib/docker_compose_template_task_list.yml"

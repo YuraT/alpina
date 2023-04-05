@@ -1,12 +1,7 @@
 - hosts: docker_hosts
   roles:
     - docker_host
-    - traefik
-    - authentik
-    - gitea
-    - nextcloud
-    - jellyfin
-    - arrstack
+    - alpina
   post_tasks:
     - name: Docker prune objects
       docker_prune:

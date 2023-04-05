@@ -1,6 +1,0 @@
----
-# vars file for roles/nextcloud/
-current_svc_name: nextcloud
-current_svc_path: "{{ my_svc_path }}/{{ current_svc_name }}"
-
-templates_source: "{{ role_path }}/templates"

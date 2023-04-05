@@ -1,9 +1,3 @@
-- name: Create my service directory
-  file:
-    state: directory
-    path: "{{ my_svc_path }}"
-    mode: "700"
-
 - name: Get IPv6 subnet for Docker
   set_fact:
     docker_ipv6_subnet: "{{ \
@@ -34,6 +28,27 @@
     immediate: yes
     state: disabled
   register: docker0_firewalld
+
+- name: Get list of running Docker containers
+  docker_host_info:
+    containers: yes
+  register: docker_container_list
+  when: clean_desired is true
+
+- name: Stop all running Docker containers
+  docker_container:
+    name: "{{ item }}"
+    state: stopped
+  loop: "{{ docker_container_list.containers | map(attribute='Id') | list }}"
+  async: 300
+  poll: 0
+  when: clean_desired is true and docker_container_list.containers | length > 0
+
+- name: Prune all Docker containers and networks
+  docker_prune:
+    containers: yes
+    networks: yes
+  when: clean_desired is true
 
 - name: Restart Docker daemon
   become: yes

@@ -1,6 +1,11 @@
 - hosts: all
   roles:
     - common
+  pre_tasks:
+  - name: Set fact for clean required
+    set_fact:
+      clean_desired: true
+
 
 - name: Install services
   import_playbook: services.yml

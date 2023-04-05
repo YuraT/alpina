@@ -1,0 +1,40 @@
+# https://stackoverflow.com/questions/41667864/can-the-templates-module-handle-multiple-templates-directories
+
+- name: Ensure stack directory exists
+  file:
+    path: "{{ current_stack_dest }}"
+    state: directory
+    mode: "700"
+
+- name: Ensure directory structure exists
+  file:
+    path: "{{ current_stack_dest }}/{{ item.path }}"
+    state: directory
+    mode: "700"
+  with_community.general.filetree: "{{ current_stack_source }}/templates"
+  when: item.state == "directory"
+
+# TODO: This is not ideal as it leaks the variables between stacks
+# But that's also not really a problem, as they won't conflict if everything is done right
+- name: Include variables for stack {{ stack }}
+  include_vars:
+    file: "{{ current_stack_source }}/app_config.yml"
+
+- name: Generate {{ current_stack_name }} deployment from templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ current_stack_dest }}/{{ item.path | regex_replace('\\.j2$', '') }}"
+    mode: "600"
+  with_community.general.filetree: "{{ current_stack_source }}/templates"
+  when: item.state == "file"
+
+- name: Deploy docker-compose for {{ current_stack_name }}
+  command: docker compose -f "{{ current_stack_dest }}/docker-compose.yml" up -d --pull --remove-orphans
+  register: docker_compose_output
+  # Not perfect idempotency, but the built-in docker_compose module doesn't support docker-compose v2
+  # And of course there's an IPv6 bug in docker-compose v1, smh
+  # https://github.com/docker/compose/issues/7670
+  changed_when: "'created' in docker_compose_output.stderr.lower()"
+
+- debug:
+    var: docker_compose_output

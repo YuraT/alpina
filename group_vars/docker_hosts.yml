@@ -1,5 +1,5 @@
 ---
-my_svc_path: ~/services
+my_svc_path: ~/alpina
 base_volume_path: /mnt/dock
 media_volume_path: /mnt/media
 
