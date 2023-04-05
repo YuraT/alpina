@@ -1,0 +1,39 @@
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
+{##}
+version: "3.9"
+
+networks:
+  {{ helpers.default_network(252) | indent(2) }}
+  traefik_traefik:
+    external: true
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    labels:
+      - {{ helpers.traefik_labels('minio', port='9090') | indent(6) }}
+      - traefik.http.routers.minio.service=minio
+      - traefik.http.routers.minio-tls.service=minio
+      - traefik.http.routers.minio-s3.rule=HostRegexp(`s3.{{ domain }}`, `{subdomain:.+}.s3.{{ domain }}`)
+      - traefik.http.routers.minio-s3.entrypoints=websecure
+      - traefik.http.routers.minio-s3.tls=true
+      - traefik.http.routers.minio-s3.tls.certresolver=letsencrypt
+      - traefik.http.routers.minio-s3.tls.domains.0.main=s3.{{ domain }}
+      - traefik.http.routers.minio-s3.tls.domains.0.sans=*.s3.{{ domain }}
+      - traefik.http.routers.minio-s3.service=minio-s3
+      - traefik.http.services.minio-s3.loadbalancer.server.port=9000
+    restart: unless-stopped
+    command: server --console-address ":9090" /data
+    env_file:
+      - .env.minio
+    networks:
+      - default
+      - traefik_traefik
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    volumes:
+      - {{ base_volume_path }}/minio/data:/data

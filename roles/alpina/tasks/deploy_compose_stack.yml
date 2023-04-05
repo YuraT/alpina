@@ -1,6 +1,6 @@
 # https://stackoverflow.com/questions/41667864/can-the-templates-module-handle-multiple-templates-directories
 
-- name: Ensure stack directory exists
+- name: Ensure {{ stack }} stack directory exists
   file:
     path: "{{ current_stack_dest }}"
     state: directory

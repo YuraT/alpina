@@ -50,6 +50,9 @@
                   <Item>
                     <option name="path" value="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.yml" />
                   </Item>
+                  <Item>
+                    <option name="path" value="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.yml" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>

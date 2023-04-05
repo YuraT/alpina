@@ -10,6 +10,7 @@
     stacks:
       - traefik
       - authentik
+      - minio
   import_tasks: deploy_collection.yml
 
 - name: Deploy collection apps
