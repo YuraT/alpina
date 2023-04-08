@@ -1,3 +1,12 @@
+- name: Register uid of remote user
+  command: id -u
+  register: remote_uid_command
+  changed_when: false
+
+- name: Set fact for uid
+  set_fact:
+    remote_uid: "{{ remote_uid_command.stdout }}"
+
 - name: Ensure alpina directory exists
   file:
     state: directory
@@ -9,6 +18,7 @@
     collection: services
     stacks:
       - traefik
+      - monitoring
       - authentik
       - minio
   import_tasks: deploy_collection.yml

@@ -49,6 +49,14 @@
     state: enabled
     immediate: yes
 
+- name: Allow 514 tcp for syslog
+  become: yes
+  firewalld:
+    port: 514/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
 - name: Enable Firewall
   become: yes
   firewalld:

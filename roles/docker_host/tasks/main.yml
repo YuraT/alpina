@@ -19,6 +19,12 @@
     mode: "0644"
   register: docker_daemon_config
 
+- name: Install Docker loki plugin for logs
+  community.docker.docker_plugin:
+    plugin_name: grafana/loki-docker-driver:latest
+    alias: loki
+    state: enable
+
 - name: Remove docker0 from firewalld trusted zone
   become: yes
   firewalld:
@@ -48,6 +54,12 @@
   docker_prune:
     containers: yes
     networks: yes
+  when: clean_desired is true
+
+- name: Clean alpina directory
+  file:
+    path: "{{ my_svc_path }}"
+    state: absent
   when: clean_desired is true
 
 - name: Restart Docker daemon

@@ -1,0 +1,19 @@
+[server]
+domain = grafana.{{ domain }}
+root_url = https://%(domain)s/
+
+[security]
+admin_user = CaZzzer
+admin_email = {{ grafana_admin_email }}
+admin_password = {{ grafana_admin_password }}
+
+# TODO: Set up Authentik OAuth
+; https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/
+;[auth]
+;disable_login_form = true
+;signout_redirect_url =
+;
+;[auth.generic_oauth]
+;name = Authentik
+;enabled = true
+;allow_sign_up = true

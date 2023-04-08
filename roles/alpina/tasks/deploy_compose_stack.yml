@@ -11,7 +11,7 @@
     path: "{{ current_stack_dest }}/{{ item.path }}"
     state: directory
     mode: "700"
-  with_community.general.filetree: "{{ current_stack_source }}/templates"
+  loop: "{{ lookup('community.general.filetree', current_stack_source + '/templates') }}"
   when: item.state == "directory"
 
 # TODO: This is not ideal as it leaks the variables between stacks
@@ -25,7 +25,7 @@
     src: "{{ item.src }}"
     dest: "{{ current_stack_dest }}/{{ item.path | regex_replace('\\.j2$', '') }}"
     mode: "600"
-  with_community.general.filetree: "{{ current_stack_source }}/templates"
+  loop: "{{ lookup('community.general.filetree', current_stack_source + '/templates') }}"
   when: item.state == "file"
 
 - name: Deploy docker-compose for {{ current_stack_name }}
@@ -35,6 +35,7 @@
   # And of course there's an IPv6 bug in docker-compose v1, smh
   # https://github.com/docker/compose/issues/7670
   changed_when: "'created' in docker_compose_output.stderr.lower()"
+  failed_when: docker_compose_output.rc != 0
 
 - debug:
     var: docker_compose_output

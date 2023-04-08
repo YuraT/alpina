@@ -1,0 +1,55 @@
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
+{##}
+version: "3.9"
+
+networks:
+  {{ helpers.default_network(251) | indent(2) }}
+  traefik_traefik:
+    external: true
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    labels:
+      - {{ helpers.traefik_labels('grafana', port='3000') | indent(6) }}
+    restart: unless-stopped
+    # Needed to make config files readable
+    user: "{{ remote_uid }}"
+    networks:
+      - default
+      - traefik_traefik
+    volumes:
+      - {{ base_volume_path }}/monitoring/grafana:/var/lib/grafana
+      - ./grafana_config:/etc/grafana:ro
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    restart: unless-stopped
+    # Needed to make config files readable
+    user: "{{ remote_uid }}"
+    command:
+      - -config.file=/etc/loki/loki-config.yaml
+    # Port forward is needed because not possible to resolve the container name from the host network
+    ports:
+      - 3100:3100
+    volumes:
+      - {{ base_volume_path }}/monitoring/loki:/loki
+      - ./loki_config:/etc/loki:ro
+    tmpfs:
+      - /tmp/loki
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    restart: unless-stopped
+    command:
+      - -config.file=/etc/promtail/promtail-config.yaml
+    ports:
+      - 514:514
+    volumes:
+        - ./promtail_config:/etc/promtail:ro
+        - /var/log:/var/log:ro
+    tmpfs:
+      - /tmp
