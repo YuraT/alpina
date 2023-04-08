@@ -5,6 +5,7 @@
      - docker-ce
      - docker-compose-plugin
      - firewalld
+     - prometheus-node-exporter
     state: latest
 
 - name: Upgrade Debian packages

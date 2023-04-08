@@ -53,3 +53,13 @@ services:
         - /var/log:/var/log:ro
     tmpfs:
       - /tmp
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    user: "{{ remote_uid }}"
+    volumes:
+      - ./prometheus_config:/etc/prometheus:ro
+      - {{ base_volume_path }}/monitoring/prometheus_configs:/etc/prometheus/extra:ro
+      - {{ base_volume_path }}/monitoring/prometheus:/prometheus
