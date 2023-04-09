@@ -58,8 +58,23 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
+    # Needed to make config files readable
     user: "{{ remote_uid }}"
     volumes:
       - ./prometheus_config:/etc/prometheus:ro
       - {{ base_volume_path }}/monitoring/prometheus_configs:/etc/prometheus/extra:ro
       - {{ base_volume_path }}/monitoring/prometheus:/prometheus
+
+  influxdb:
+    image: influxdb:2.7-alpine
+    container_name: influxdb
+    labels:
+      - {{ helpers.traefik_labels('influxdb', port='8086') | indent(6) }}
+    restart: unless-stopped
+    env_file:
+      - .env.influxdb
+    networks:
+      - default
+      - traefik_traefik
+    volumes:
+      - {{ base_volume_path }}/monitoring/influxdb:/var/lib/influxdb2
