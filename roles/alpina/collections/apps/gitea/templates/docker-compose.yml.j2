@@ -9,7 +9,7 @@ networks:
 
 services:
   server:
-    image: gitea/gitea:1.18
+    image: gitea/gitea:1.19
     container_name: gitea_server
     labels:
       - {{ helpers.traefik_labels('gitea', port='3000') | indent(6) }}

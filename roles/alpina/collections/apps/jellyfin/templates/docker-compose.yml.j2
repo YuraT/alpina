@@ -9,7 +9,7 @@ networks:
 
 services:
   jellyfin:
-    image: jellyfin/jellyfin:10.8.6
+    image: jellyfin/jellyfin:latest
     container_name: jellyfin_jellyfin
     labels:
       - {{ helpers.traefik_labels('jellyfin', port='8096') | indent(6) }}
