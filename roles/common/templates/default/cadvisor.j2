@@ -1,0 +1,47 @@
+# config options for cadvisor(1)
+#
+
+# Docker endpoint to connect to
+# Default: unix:///var/run/docker.sock
+CADVISOR_DOCKER_ENDPOINT="unix:///var/run/docker.sock"
+
+# Port to listen on
+# Default: 8080
+CADVISOR_PORT="9110"
+
+# Storage driver
+# Default: none/blank
+#
+# Available Options:
+#  - <empty>
+#  - bigquery
+#  - elasticsearch
+#  - kafka
+#  - redis
+#  - statsd
+#  - stdout
+CADVISOR_STORAGE_DRIVER=""
+
+# Storage driver host
+# Default: localhost:8086"
+CADVISOR_STORAGE_DRIVER_HOST="localhost:8086"
+
+# Storage driver password
+# Default: root
+CADVISOR_STORAGE_DRIVER_PASSWORD="root"
+
+# Storage driver secure connection
+# Default: false
+CADVISOR_STORAGE_DRIVER_SECURE="false"
+
+# Storage driver user
+# Default: root
+CADVISOR_STORAGE_DRIVER_USER="root"
+
+# Log to stderr ("true" logs to journal on systemd
+# and "false" to "/var/log/cadvisor.log" on SysV)
+# Default: true
+CADVISOR_LOG_TO_STDERR="true"
+
+# Other options:
+#DAEMON_ARGS=""
