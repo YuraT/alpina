@@ -18,6 +18,10 @@ scrape_configs:
     static_configs:
       - targets: ["{{ ansible_host }}:9110"]
 
+  - job_name: "traefik"
+    static_configs:
+      - targets: ["{{ ansible_host }}:8082"]
+
   - job_name: "loki"
     static_configs:
       - targets: ["loki:3100"]

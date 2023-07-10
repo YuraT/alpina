@@ -18,6 +18,12 @@ entryPoints:
     address: ":443"
     http3:
       advertisedPort: 443
+  metrics:
+    address: ":8082"
+
+metrics:
+  prometheus:
+    entryPoint: metrics
 
 certificatesResolvers:
   letsencrypt:
