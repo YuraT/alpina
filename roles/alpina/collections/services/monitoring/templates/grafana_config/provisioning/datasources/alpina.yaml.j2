@@ -27,3 +27,20 @@ datasources:
     secureJsonData:
       token: {{ influxdb_admin_token }}
     editable: false
+
+  - name: Jaeger
+    type: jaeger
+    access: proxy
+    uid: jaeger
+    url: http://jaeger:16686
+    editable: false
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: 1h
+        spanEndTimeShift: -1h
+        tags: []
+        filterByTraceID: false
+        filterBySpanID: false
+        customQuery: true
+        query: '{container_name=~".*$${__span.tags["traefik.service.name"]}.*"}'

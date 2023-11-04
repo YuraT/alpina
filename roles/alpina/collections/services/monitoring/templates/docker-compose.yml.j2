@@ -78,3 +78,13 @@ services:
       - traefik_traefik
     volumes:
       - {{ base_volume_path }}/monitoring/influxdb:/var/lib/influxdb2
+
+  jaeger:
+    image: jaegertracing/all-in-one:1
+    container_name: jaeger
+    restart: unless-stopped
+    ports:
+      - 5778:5778
+      - 6831:6831/udp
+    volumes:
+      - {{ base_volume_path }}/monitoring/jaeger:/jaeger
