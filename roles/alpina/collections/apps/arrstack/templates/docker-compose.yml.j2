@@ -3,34 +3,59 @@
 version: "3.9"
 
 networks:
-{#  {{ helpers.default_network(249) | indent(2) }}#}
-  # TODO: Figure out IPv6 leaks
-  ipv4_only:
+  {{ helpers.default_network(249) | indent(2) }}
   traefik_traefik:
     external: true
 
 services:
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+    env_file:
+      - .env.gluetun
+    restart: unless-stopped
+    networks:
+      - default
+      - traefik_traefik
+
   qbittorrent:
     image: linuxserver/qbittorrent:latest
     container_name: qbittorrent
-    cap_add:
-      - NET_ADMIN
     labels:
       - {{ helpers.traefik_labels('qbit', port='8080', auth=true) | indent(6) }}
     restart: unless-stopped
     environment:
+      {#  Keeping this for debugging purposes  -#}
       - DOCKER_MODS=linuxserver/mods:universal-package-install
-      - INSTALL_PACKAGES=wireguard-tools-wg
-    networks:
-      - ipv4_only
-      - traefik_traefik
+    network_mode: service:gluetun
     volumes:
-      - ./wireguard:/etc/wireguard:ro
-      - ./custom-init:/custom-cont-init.d:ro
       - {{ base_volume_path }}/arrstack/config/qbittorrent:/config
       - {{ base_volume_path }}/arrstack/downloads:/downloads
       - {{ media_volume_path }}/Plex:/media/Plex
       - {{ media_volume_path }}/iso-img:/media/iso-img
+
+  {#  https://github.com/qdm12/gluetun/issues/1488#issuecomment-1489597284  -#}
+  {#  Even though it should work without this, there is no way to manually set the router in qbittorrent.  -#}
+  {#  So you get 'UPnP/NAT-PMP port mapping failed. Message: "could not map port using UPnP[10.2.0.2]: no router found"'  -#}
+  qbittorrent_natmap:
+    container_name: qbittorrent_natmap
+    image: ghcr.io/soxfor/qbittorrent-natmap:latest
+    restart: unless-stopped
+    environment:
+      - QBITTORRENT_SERVER=10.2.0.2
+      - VPN_GATEWAY=10.2.0.1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    network_mode: "service:gluetun"
+    depends_on:
+      gluetun:
+        condition: service_healthy
+      qbittorrent:
+        condition: service_started
 
   prowlarr:
     image: linuxserver/prowlarr:latest
@@ -41,7 +66,7 @@ services:
     depends_on:
       - qbittorrent
     networks:
-      - ipv4_only
+      - default
       - traefik_traefik
     volumes:
       - {{ base_volume_path }}/arrstack/config/prowlarr:/config
@@ -55,7 +80,7 @@ services:
     depends_on:
       - qbittorrent
     networks:
-      - ipv4_only
+      - default
       - traefik_traefik
     volumes:
       - {{ base_volume_path }}/arrstack/config/sonarr:/config
@@ -71,7 +96,7 @@ services:
     depends_on:
       - qbittorrent
     networks:
-      - ipv4_only
+      - default
       - traefik_traefik
     volumes:
       - {{ base_volume_path }}/arrstack/config/radarr:/config
