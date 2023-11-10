@@ -38,25 +38,6 @@ services:
       - {{ media_volume_path }}/Plex:/media/Plex
       - {{ media_volume_path }}/iso-img:/media/iso-img
 
-  {#  https://github.com/qdm12/gluetun/issues/1488#issuecomment-1489597284  -#}
-  {#  Even though it should work without this, there is no way to manually set the router in qbittorrent.  -#}
-  {#  So you get 'UPnP/NAT-PMP port mapping failed. Message: "could not map port using UPnP[10.2.0.2]: no router found"'  -#}
-  qbittorrent_natmap:
-    container_name: qbittorrent_natmap
-    image: ghcr.io/soxfor/qbittorrent-natmap:latest
-    restart: unless-stopped
-    environment:
-      - QBITTORRENT_SERVER=10.2.0.2
-      - VPN_GATEWAY=10.2.0.1
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    network_mode: "service:gluetun"
-    depends_on:
-      gluetun:
-        condition: service_healthy
-      qbittorrent:
-        condition: service_started
-
   prowlarr:
     image: linuxserver/prowlarr:latest
     container_name: prowlarr
