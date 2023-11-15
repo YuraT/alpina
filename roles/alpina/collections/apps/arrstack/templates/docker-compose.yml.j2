@@ -37,6 +37,9 @@ services:
       - {{ base_volume_path }}/arrstack/downloads:/downloads
       - {{ media_volume_path }}/Plex:/media/Plex
       - {{ media_volume_path }}/iso-img:/media/iso-img
+    depends_on:
+      gluetun:
+        condition: service_healthy
 
   prowlarr:
     image: linuxserver/prowlarr:latest
