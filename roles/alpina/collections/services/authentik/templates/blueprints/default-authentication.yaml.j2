@@ -2,16 +2,55 @@ version: 1
 metadata:
   labels:
     blueprints.goauthentik.io/instantiate: "true"
-  name: Alpina - Default Identification Stage
+  name: Alpina - Default Authentication Modifications
 entries:
+    # Add a new flow for passwordless WebAuthn authentication
+  - identifiers:
+      slug: authentication-passwordless-flow
+    model: authentik_flows.flow
+    attrs:
+      designation: authentication
+      name: WebAuthn Authentication Flow
+      title: Sign in with a passkey
+
+    # Add a new stage to the flow to validate just WebAuthn devices
+  - identifiers:
+      name: webauthn-validation
+    model: authentik_stages_authenticator_validate.authenticatorvalidatestage
+    attrs:
+      device_classes:
+        - webauthn
+      not_configured_action: deny
+      webauthn_user_verification: required
+
+    # Stage bindings for passwordless flow,
+    # 1. Validate WebAuthn key
+  - identifiers:
+      order: 10
+      stage: !Find [authentik_stages_authenticator_validate.authenticatorvalidatestage, [name, webauthn-validation]]
+      target: !Find [authentik_flows.flow, [slug, authentication-passwordless-flow]]
+    model: authentik_flows.flowstagebinding
+    # 2. Finish authenticating user
+  - identifiers:
+      order: 100
+      stage: !Find [authentik_stages_user_login.userloginstage, [name, default-authentication-login]]
+      target: !Find [authentik_flows.flow, [slug, authentication-passwordless-flow]]
+    model: authentik_flows.flowstagebinding
+
+    # Some modifications to the default identification stage
   - identifiers:
       name: default-authentication-identification
     model: authentik_stages_identification.identificationstage
     attrs:
+      # Allow username and password fields to be on the same page
+      password_stage: !Find [authentik_stages_password.passwordstage, [name, default-authentication-password]]
+      # Add a button to use the passwordless WebAuthn flow
+      passwordless_flow: !Find [authentik_flows.flow, [slug, authentication-passwordless-flow]]
       sources:
         - !Find [authentik_core.source, [slug, authentik-built-in]]
         - !Find [authentik_sources_oauth.oauthsource, [slug, github]]
 
+    # Enable compatibility mode for the default authentication flow for better autofill support
   - identifiers:
       slug: default-authentication-flow
     model: authentik_flows.flow
