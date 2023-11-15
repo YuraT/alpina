@@ -46,8 +46,7 @@ entries:
       group: "Arrstack"
       meta_description: "Hello, I'm {{ service }}!"
       meta_publisher: Alpina
-      # This isn't supported yet, https://github.com/goauthentik/authentik/issues/3484
-      # meta_icon: "https://{{ service }}.{{ domain }}/Content/Images/logo.svg"
+      icon: "https://{{ service }}.{{ domain }}/{{ "images/qbittorrent-tray.svg" if service == "qBit" else "Content/Images/logo.svg" }}"
       open_in_new_tab: true
       policy_engine_mode: any
       provider: !KeyOf {{ service | lower }}

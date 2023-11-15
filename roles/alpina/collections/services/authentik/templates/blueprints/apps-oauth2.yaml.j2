@@ -43,8 +43,7 @@ entries:
       group: "Apps"
       meta_description: "Hello, I'm {{ app }}!"
       meta_publisher: Alpina
-      # This isn't supported yet, https://github.com/goauthentik/authentik/issues/3484
-      # meta_icon: "{{ apps[app]["icon"] }}"
+      icon: "{{ apps[app]["icon"] }}"
       open_in_new_tab: true
       policy_engine_mode: any
       provider: !KeyOf {{ app | lower }}
