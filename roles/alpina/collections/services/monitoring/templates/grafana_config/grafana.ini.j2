@@ -2,18 +2,33 @@
 domain = grafana.{{ domain }}
 root_url = https://%(domain)s/
 
-[security]
-admin_user = CaZzzer
-admin_email = {{ grafana_admin_email }}
-admin_password = {{ grafana_admin_password }}
+;[security]
+;admin_user =
+;admin_email =
+;admin_password =
 
-# TODO: Set up Authentik OAuth
 ; https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/
-;[auth]
-;disable_login_form = true
-;signout_redirect_url =
-;
-;[auth.generic_oauth]
-;name = Authentik
-;enabled = true
-;allow_sign_up = true
+[auth]
+disable_login_form = true
+signout_redirect_url = https://auth.{{ domain }}/application/o/grafana/end-session/
+
+[auth.generic_oauth]
+name = Authentik
+enabled = true
+allow_sign_up = true
+
+client_id = grafana
+client_secret = {{ auth_grafana_client_secret }}
+
+scopes = openid profile email
+auth_url = https://auth.{{ domain }}/application/o/authorize/
+token_url = https://auth.{{ domain }}/application/o/token/
+api_url = https://auth.{{ domain }}/application/o/userinfo/
+
+email_attribute_path = email
+login_attribute_path = preferred_username
+name_attribute_path = name
+
+# Optionally map user groups to Grafana roles
+allow_assign_grafana_admin = true
+role_attribute_path = contains(groups[*], 'Grafana Admins') && 'GrafanaAdmin' || 'Viewer'

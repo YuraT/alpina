@@ -1,0 +1,56 @@
+version: 1
+metadata:
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+  name: Alpina - OAuth2 Services
+entries:
+  {% set apps = {
+    "Grafana": {
+      "redirect_uris": "https://grafana."~ domain ~"/login/generic_oauth",
+      "icon": "https://grafana."~ domain ~"/public/img/grafana_icon.svg",
+      "client_secret": auth_grafana_client_secret,
+    },
+  } -%}
+  # TODO: Add Minio
+
+  {% for app in apps.keys() -%}
+  - identifiers:
+      name: {{ app }}
+    model: authentik_providers_oauth2.oauth2provider
+    id: {{ app | lower }}
+    attrs:
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      client_type: confidential
+      client_id: {{ app | lower }}
+      client_secret: {{ apps[app]["client_secret"] }}
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, openid]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, email]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, profile]]
+      redirect_uris: {{ apps[app]["redirect_uris"] }}
+
+  - identifiers:
+      slug: {{ app | lower }}
+    model: authentik_core.application
+    attrs:
+      name: {{ app }}
+      group: "Services"
+      meta_description: "Hello, I'm {{ app }}!"
+      meta_publisher: Alpina
+      icon: "{{ apps[app]["icon"] }}"
+      open_in_new_tab: true
+      provider: !KeyOf {{ app | lower }}
+
+  - identifiers:
+      name: "{{ app }} Admins"
+    model: authentik_core.group
+    id: "{{ app }} Admins"
+
+  - identifiers:
+      group: !KeyOf "{{ app }} Admins"
+      target: !Find [authentik_core.application, [slug, {{ app | lower }}]]
+    model: authentik_policies.policybinding
+    attrs:
+      order: 0
+
+  {% endfor %}
