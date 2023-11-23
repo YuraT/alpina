@@ -88,3 +88,12 @@ services:
       - 6831:6831/udp
     volumes:
       - {{ base_volume_path }}/monitoring/jaeger:/jaeger
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    labels:
+      - {{ helpers.traefik_labels('uptime', port='3001', auth=true) | indent(6) }}
+    restart: unless-stopped
+    volumes:
+      - {{ base_volume_path }}/monitoring/uptime-kuma:/app/data
