@@ -2,9 +2,10 @@
   roles:
     - common
   pre_tasks:
-  - name: Set fact for clean required
+  - name: Set fact for clean desired of docker objects and compose files
     set_fact:
-      clean_desired: true
+      # clean_desired_arg is an extra variable passed to the playbook
+      clean_desired: "{{ clean_desired_arg | bool }}"
 
 
 - name: Install services
