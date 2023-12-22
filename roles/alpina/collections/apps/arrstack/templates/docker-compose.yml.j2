@@ -21,6 +21,8 @@ services:
     networks:
       - default
       - traefik_traefik
+    volumes:
+      - {{ base_volume_path }}/arrstack/gluetun:/gluetun
 
   qbittorrent:
     image: linuxserver/qbittorrent:latest
