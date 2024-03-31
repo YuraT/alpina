@@ -60,6 +60,9 @@ services:
     restart: unless-stopped
     # Needed to make config files readable
     user: "{{ remote_uid }}"
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=30d
     volumes:
       - ./prometheus_config:/etc/prometheus:ro
       - {{ base_volume_path }}/monitoring/prometheus_configs:/etc/prometheus/extra:ro
