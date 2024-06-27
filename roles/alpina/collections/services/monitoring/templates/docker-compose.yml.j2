@@ -1,6 +1,4 @@
 {% import 'contrib/compose_helpers.j2' as helpers with context %}
-{##}
-version: "3.9"
 
 networks:
   {{ helpers.default_network(251) | indent(2) }}
@@ -67,6 +65,25 @@ services:
       - ./prometheus_config:/etc/prometheus:ro
       - {{ base_volume_path }}/monitoring/prometheus_configs:/etc/prometheus/extra:ro
       - {{ base_volume_path }}/monitoring/prometheus:/prometheus
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    network_mode: host
+    pid: host
+    volumes:
+      - /:/host:ro,rslave
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: unless-stopped
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
 
   influxdb:
     image: influxdb:2.7-alpine

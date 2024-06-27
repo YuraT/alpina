@@ -1,12 +1,3 @@
-- name: Configure cadvisor
-  become: yes
-  template:
-    src: default/cadvisor.j2
-    dest: /etc/default/cadvisor
-    owner: root
-    group: root
-    mode: 0644
-
 - name: Install Debian packages
   become: yes
   ansible.builtin.apt:
@@ -14,8 +5,6 @@
      - docker-ce
      - docker-compose-plugin
      - firewalld
-     - prometheus-node-exporter
-     - cadvisor
     state: latest
 
 - name: Upgrade Debian packages
@@ -27,6 +16,13 @@
     autoremove: yes
     state: latest
   register: apt_upgrades
+
+- name: Ensure firewalld is running
+  become: yes
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
 
 - name: Allow SSH
   become: yes
@@ -65,12 +61,6 @@
   firewalld:
     port: 514/tcp
     permanent: yes
-    state: enabled
-    immediate: yes
-
-- name: Enable Firewall
-  become: yes
-  firewalld:
     state: enabled
     immediate: yes
 

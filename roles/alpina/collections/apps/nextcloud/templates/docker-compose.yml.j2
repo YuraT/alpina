@@ -1,6 +1,4 @@
 {% import 'contrib/compose_helpers.j2' as helpers with context %}
-{##}
-version: "3.9"
 
 networks:
   {{ helpers.default_network(198) | indent(2) }}

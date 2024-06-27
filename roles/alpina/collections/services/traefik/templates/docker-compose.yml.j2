@@ -1,6 +1,4 @@
 {% import 'contrib/compose_helpers.j2' as helpers with context %}
-{##}
-version: "3.9"
 
 networks:
   traefik:
@@ -8,7 +6,8 @@ networks:
     enable_ipv6: true
     ipam:
       config:
-        - subnet: {{ traefik_ip }}/24
+        # TODO: Consider removing traefik network, it shouldn't be needed with host networking
+        - subnet: {{ traefik_subnet }}/24
         - subnet: {{ docker_ipv6_subnet | ansible.utils.ipsubnet(80, 255) }}
 
 services:

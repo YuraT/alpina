@@ -3,4 +3,4 @@ my_svc_path: ~/alpina
 base_volume_path: /mnt/dock
 media_volume_path: /mnt/media
 
-traefik_ip: 172.16.122.254
+traefik_subnet: 172.16.122.0

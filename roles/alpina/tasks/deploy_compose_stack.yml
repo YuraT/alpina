@@ -29,7 +29,7 @@
   when: item.state == "file"
 
 - name: Deploy docker-compose for {{ current_stack_name }}
-  command: docker compose -f "{{ current_stack_dest }}/docker-compose.yml" up -d --pull --remove-orphans
+  command: docker compose -f "{{ current_stack_dest }}/docker-compose.yml" up -d --pull always --remove-orphans
   register: docker_compose_output
   # Not perfect idempotency, but the built-in docker_compose module doesn't support docker-compose v2
   # And of course there's an IPv6 bug in docker-compose v1, smh
