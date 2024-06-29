@@ -1,4 +1,4 @@
-- hosts: docker_hosts
+- hosts: alpina
   roles:
     - docker_host
     - alpina

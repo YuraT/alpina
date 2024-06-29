@@ -1,18 +1,15 @@
 - name: Ensure {{ collection }} collection directory exists
   file:
-    path: "{{ my_svc_path }}/{{ collection }}"
+    path: "{{ alpina_svc_path }}/{{ collection }}"
     state: directory
     mode: "700"
 
 - name: Deploy docker compose stacks for {{ collection }}
   vars:
     current_stack_name: "{{ stack }}"
-    current_stack_dest: "{{ my_svc_path }}/{{ collection }}/{{ stack }}"
-    current_stack_source: "{{ role_path }}/collections/{{ collection }}/{{ stack }}"
+    current_stack_dest: "{{ alpina_svc_path }}/{{ collection }}/{{ stack }}"
+    current_stack_source: "{{ role_path }}/templates/{{ collection }}/{{ stack }}"
   include_tasks: deploy_compose_stack.yml
   loop: "{{ stacks }}"
   loop_control:
     loop_var: stack
-
-- debug:
-    var: acme_email

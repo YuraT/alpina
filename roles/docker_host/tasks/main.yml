@@ -58,7 +58,7 @@
 
 - name: Clean alpina directory
   file:
-    path: "{{ my_svc_path }}"
+    path: "{{ alpina_svc_path }}"
     state: absent
   when: clean_desired is true
 

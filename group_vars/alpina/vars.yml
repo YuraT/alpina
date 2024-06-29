@@ -1,0 +1,48 @@
+# Shared variables between environments
+
+---
+alpina_svc_path: ~/alpina
+base_volume_path: /mnt/dock
+media_volume_path: /mnt/media
+
+traefik_subnet: 172.16.122.0
+
+# Authentik
+authentik_db_password: "{{ vault_authentik_db_password }}"
+authentik_secret_key: "{{ vault_authentik_secret_key }}"
+
+authentik_sendgrid_api_key: "{{ vault_authentik_sendgrid_api_key }}"
+
+auth_grafana_client_secret: "{{ vault_auth_grafana_client_secret }}"
+arrstack_password: "{{ vault_arrstack_password }}"
+
+# Minio
+minio_password: "{{ vault_minio_password }}"
+
+# Monitoring
+## auth_grafana_client_secret:
+influxdb_admin_password: "{{ vault_influxdb_admin_password }}"
+influxdb_admin_token: "{{ vault_influxdb_admin_token }}"
+
+# Traefik
+acme_email: "{{ vault_acme_email }}"
+cloudflare_api_token: "{{ vault_cloudflare_api_token }}"
+
+# Arrstack
+wg_peer_pubkey: "{{ vault_wg_peer_pubkey }}"
+vpn_server_names: "{{ vault_vpn_server_names }}"
+
+# Gitea
+gitea_db_password: "{{ vault_gitea_db_password }}"
+gitea_sendgrid_api_key: "{{ vault_gitea_sendgrid_api_key }}"
+## Security
+secret_key: "{{ vault_secret_key }}"
+internal_token: "{{ vault_internal_token }}"
+jwt_secret: "{{ vault_jwt_secret }}"
+
+# Jellyfin
+
+# Nextcloud
+nextcloud_db_password: "{{ vault_nextcloud_db_password }}"
+redis_password: "{{ vault_redis_password }}"
+nextcloud_sendgrid_api_key: "{{ vault_nextcloud_sendgrid_api_key }}"

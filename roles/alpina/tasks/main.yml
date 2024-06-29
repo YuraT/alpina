@@ -10,7 +10,7 @@
 - name: Ensure alpina directory exists
   file:
     state: directory
-    path: "{{ my_svc_path }}"
+    path: "{{ alpina_svc_path }}"
     mode: "700"
 
 - name: Deploy collection services

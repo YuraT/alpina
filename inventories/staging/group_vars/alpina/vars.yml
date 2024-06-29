@@ -1,0 +1,14 @@
+# Environment specific variables (staging)
+
+---
+docker_ipv6_index: 254
+
+# Arrstack VPN
+wg_privkey: "{{ vault_wg_privkey }}"
+wg_psk: "{{ vault_wg_psk }}"
+wg_addresses: "{{ vault_wg_addresses }}"
+fw_vpn_input_ports: "{{ vault_fw_vpn_input_ports }}"
+
+# Authentik GitHub OAuth
+github_consumer_key: dbacb8621c37320eb745
+github_consumer_secret: "{{ vault_github_consumer_secret }}"
