@@ -37,7 +37,7 @@ services:
       - {{ base_volume_path }}/authentik/certs:/certs
 
   postgres:
-    image: postgres:12-alpine
+    image: postgres:16-alpine
     container_name: authentik_postgres
     restart: unless-stopped
     env_file:
