@@ -8,9 +8,6 @@ accessLog:
   filePath: /logs/access.log
   bufferingSize: 100
 
-experimental:
-  http3: true
-
 entryPoints:
   web:
     address: ":80"
@@ -26,8 +23,10 @@ metrics:
     entryPoint: metrics
 
 tracing:
-  jaeger:
-    samplingServerURL: http://localhost:5778/sampling
+  otlp:
+    grpc:
+      endpoint: "localhost:4317"
+      insecure: true
 
 certificatesResolvers:
   letsencrypt:
