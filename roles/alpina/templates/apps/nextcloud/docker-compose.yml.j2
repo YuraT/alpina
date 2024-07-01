@@ -10,6 +10,8 @@ services:
   app:
     image: nextcloud:${NEXTCLOUD_VERSION}
     container_name: nextcloud_app
+    labels:
+      - {{ helpers.traefik_labels('nc', port='80') | indent(6) }}
     restart: unless-stopped
     depends_on:
       - db
@@ -40,18 +42,25 @@ services:
   notify_push:
     image: nextcloud:${NEXTCLOUD_VERSION}
     container_name: nextcloud_notify_push
+    {# TODO: Refactor this and minio -#}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nc-notify.rule=Host(`nc.{{ domain }}`) && PathPrefix(`/push`)
+      - traefik.http.routers.nc-notify.entrypoints=websecure
+      - traefik.http.routers.nc-notify.tls=true
+      - traefik.http.routers.nc-notify.tls.certresolver=letsencrypt
+      - traefik.http.routers.nc-notify.tls.domains.0.main={{ domain }}
+      - traefik.http.routers.nc-notify.tls.domains.0.sans=*.{{ domain }}
+      - traefik.http.services.nc-notify.loadbalancer.server.port=7867
     restart: unless-stopped
-    depends_on:
-      - app
+    user: www-data
+    env_file:
+      - .env.notify_push
+    network_mode: service:app
     entrypoint:
       - /var/www/html/custom_apps/notify_push/bin/x86_64/notify_push
-      - /var/www/html/config/config.php
-    networks:
-      - default
     volumes:
       - {{ base_volume_path }}/nextcloud/nextcloud:/var/www/html
-      - {{ base_volume_path }}/nextcloud/nextcloud_config:/var/www/html/config
-      - {{ base_volume_path }}/nextcloud/nextcloud_data:/var/www/html/data
 
   db:
     image: postgres:16-alpine
@@ -65,7 +74,7 @@ services:
       - {{ base_volume_path }}/nextcloud/db:/var/lib/postgresql/data
 
   redis:
-    image: redis:7-alpine
+    image: redis:alpine
     container_name: nextcloud_redis
     restart: unless-stopped
     env_file:
@@ -76,20 +85,3 @@ services:
       - sh
       - -c
       - redis-server --requirepass $$REDIS_PASSWORD
-
-  web:
-    image: nginx:1.23-alpine
-    container_name: nextcloud_web
-    labels:
-      - {{ helpers.traefik_labels('nc') | indent(6) }}
-    restart: unless-stopped
-    links:
-      - app
-    networks:
-      - traefik_traefik
-      - default
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - {{ base_volume_path }}/nextcloud/nextcloud:/var/www/html
-      - {{ base_volume_path }}/nextcloud/nextcloud_config:/var/www/html/config
-      - {{ base_volume_path }}/nextcloud/nextcloud_data:/var/www/html/data

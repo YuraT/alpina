@@ -74,6 +74,9 @@
                   <Item>
                     <option name="path" value="file:///run/user/1000/kio-fuse-kipURF/sftp/root@debbi.lab.home/mnt/dock/traefik/rules/hello-world.yml" />
                   </Item>
+                  <Item>
+                    <option name="path" value="roles/alpina/templates/services/traefik/rules/traefik-dash.yml.j2" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>

@@ -45,3 +45,15 @@ password hashes. This can be done by running the following command:
 ```bash
 docker compose exec -it <db_service> psql -U <db_user> -c "\password"
 ```
+
+## Nextcloud
+Nextcloud requires some additional work to set up notify_push.
+
+- Initially, comment out the notify_push service in the docker compose.
+- Set up nextcloud and install the Client Push (notify_push) app.
+- Uncomment the notify_push service in the docker compose and `up -d` the stack.
+- ```bash
+  docker compose exec app ./occ notify_push:setup https://nc.<domain>/push
+  ```
+
+I should probably get around to automating this at some point.
