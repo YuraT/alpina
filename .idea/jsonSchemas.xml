@@ -39,6 +39,22 @@
             </SchemaInfo>
           </value>
         </entry>
+        <entry key="Loki">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="Loki" />
+              <option name="relativePathToSchema" value="https://json.schemastore.org/loki.json" />
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="roles/alpina/templates/services/monitoring/loki_config/loki-config.yaml.j2" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="Traefik v2">
           <value>
             <SchemaInfo>
