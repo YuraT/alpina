@@ -4,6 +4,10 @@ RUN pip install grafanalib
 
 COPY ./grafana_config/dashboards /dashboards
 
+# Required for grafanalib to find the shared python files like common.py
+# https://github.com/weaveworks/grafanalib/issues/58
+ENV PYTHONPATH=/dashboards
+
 RUN generate-dashboards /dashboards/*.dashboard.py
 
 FROM grafana/grafana:latest

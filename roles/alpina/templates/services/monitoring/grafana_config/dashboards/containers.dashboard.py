@@ -5,28 +5,21 @@ from grafanalib.core import (
 )
 from grafanalib.formatunits import BYTES_IEC, SECONDS, BYTES_SEC_IEC
 
-prom_datasource='prometheus'
-loki_datasource='loki'
+from common import LokiTarget, PrometheusTemplate
 
-# TODO: this is (clown emoji), normal Target gave me errors in grafana
-class LokiTarget(object):
-    def to_json_data(self):
-        return {
-            'datasource': loki_datasource,
-            'expr': '{compose_project=~"$compose_project", container_name=~"$container_name"} |= `$logs_query`',
-            'legendFormat': '{{ container_name }}',
-            'refId': 'A',
-            'queryType': 'range',
-        }
+prom_datasource='${datasource}'
+loki_datasource='loki'
 
 dashboard = Dashboard(
     title='Containers',
     uid='containers',
     description='Data for compose projects from default Prometheus datasource collected by Cadvisor',
     tags=[
-        'example'
+        'linux',
+        'docker',
     ],
     templating=Templating(list=[
+        PrometheusTemplate,
         Template(
             name='compose_project',
             label='Compose Project',
@@ -44,7 +37,6 @@ dashboard = Dashboard(
             includeAll=True,
             multi=True,
             refresh=REFRESH_ON_TIME_RANGE_CHANGE,
-
         ),
         Template(
             name='logs_query',
@@ -56,7 +48,6 @@ dashboard = Dashboard(
     timezone='browser',
     panels=[
         TimeSeries(
-            id=1,
             title='Container Memory Usage',
             unit=BYTES_IEC,
             gridPos=GridPos(h=8, w=12, x=0, y=0),
@@ -76,13 +67,14 @@ dashboard = Dashboard(
             ],
         ),
         TimeSeries(
-            id=2,
             title='Container CPU Usage',
             unit=SECONDS,
             gridPos=GridPos(h=8, w=12, x=12, y=0),
             lineWidth=2,
             fillOpacity=10,
             showPoints='never',
+            tooltipMode='all',
+            tooltipSort='desc',
             targets=[
                 Target(
                     datasource=prom_datasource,
@@ -93,7 +85,6 @@ dashboard = Dashboard(
             ],
         ),
         TimeSeries(
-            id=3,
             title='Container Network Traffic',
             unit=BYTES_SEC_IEC,
             gridPos=GridPos(h=8, w=12, x=0, y=8),
@@ -118,7 +109,6 @@ dashboard = Dashboard(
             ],
         ),
         Logs(
-            id=4,
             title='',
             gridPos=GridPos(h=8, w=12, x=12, y=8),
             showLabels=True,
@@ -127,13 +117,12 @@ dashboard = Dashboard(
             prettifyLogMessage=True,
             dedupStrategy='numbers',
             targets=[
-                LokiTarget(),
-                # Target(
-                #     datasource=loki_datasource,
-                #     expr='{compose_project=~"$compose_project", container_name=~"$container_name"} |= `$logs_query`',
-                #     legendFormat='{{ container_name }}',
-                #     refId='A',
-                # ),
+                LokiTarget(
+                    loki_datasource=loki_datasource,
+                    expr='{compose_project=~"$compose_project", container_name=~"$container_name"} |= `$logs_query`',
+                    legendFormat='{{ container_name }}',
+                    refId='A',
+                ),
             ],
         ),
     ],
