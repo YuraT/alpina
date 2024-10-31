@@ -8,6 +8,22 @@ running on top of TrueNAS SCALE, separating all the docker stuff from the applia
 
 # Notes
 
+## Monitoring
+The monitoring stack is set up to monitor all the containers and the host.
+
+This is a work in progress, Grafana is set up with grafanalib, a Python library that generates Grafana dashboards.
+The dashboards are generated from Python scripts in 
+[grafana_config/dashboards](roles/alpina/templates/services/monitoring/grafana_config/dashboards).
+
+This requires a custom grafana image, which is built from the 
+[Dockerfile](roles/alpina/templates/services/monitoring/Dockerfile).
+
+This also means it has to be manually rebuilt whenever the dashboards are updated.
+From the services/monitoring directory, run:
+```bash
+docker compose up -d --build --force-recreate grafana
+```
+
 ## IPv6
 The current configuration is designed to work with IPv6. 
 However, because of how (not properly) I'm doing the subnetting 

@@ -132,6 +132,9 @@
                   <Item>
                     <option name="path" value="roles/alpina/collections/services/monitoring/templates/prometheus_config/prometheus.yml.j2" />
                   </Item>
+                  <Item>
+                    <option name="path" value="roles/alpina/templates/services/monitoring/prometheus_config/prometheus.yml.j2" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
