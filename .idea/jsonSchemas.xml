@@ -31,7 +31,7 @@
                 <list>
                   <Item>
                     <option name="directory" value="true" />
-                    <option name="path" value="roles/alpina/collections/services/authentik/templates/blueprints" />
+                    <option name="path" value="roles/alpina/templates/services/authentik/blueprints" />
                     <option name="mappingKind" value="Directory" />
                   </Item>
                 </list>
