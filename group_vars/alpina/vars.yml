@@ -16,6 +16,7 @@ authentik_sendgrid_api_key: "{{ vault_authentik_sendgrid_api_key }}"
 auth_grafana_client_secret: "{{ vault_auth_grafana_client_secret }}"
 auth_gitea_client_secret: "{{ vault_auth_gitea_client_secret }}"
 auth_nextcloud_client_secret: "{{ vault_auth_nextcloud_client_secret }}"
+auth_minio_client_secret: "{{ vault_auth_minio_client_secret }}"
 arrstack_password: "{{ vault_arrstack_password }}"
 
 # Minio

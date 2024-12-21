@@ -8,6 +8,8 @@ entries:
       name: "admins"
     model: authentik_core.group
     id: "admins"
+    attrs:
+      is_superuser: true
 
   - identifiers:
       name: "users"
@@ -21,3 +23,18 @@ entries:
     attrs:
       arrstack_username: "arr"
       arrstack_password: "{{ arrstack_password }}"
+
+  - identifiers:
+      scope_name: "minio"
+    model: authentik_providers_oauth2.scopemapping
+    id: "scope-minio"
+    attrs:
+      name: "Minio Policy"
+      expression: |
+        policy = "default"
+        if ak_is_group_member(request.user, name="admins"):
+            policy = "consoleAdmin"
+
+        return {
+          "policy": policy,
+        }

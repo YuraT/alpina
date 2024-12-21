@@ -12,6 +12,13 @@ entries:
       "ui_group": "Services",
       "allowed_for_groups": ["admins"],
     },
+    "Minio": {
+      "redirect_uri": "https://minio."~ domain ~"/oauth_callback",
+      "icon": "https://minio."~ domain ~"/logo192.png",
+      "client_secret": auth_minio_client_secret,
+      "ui_group": "Services",
+      "allowed_for_groups": ["admins"],
+    },
     "Gitea": {
       "redirect_uri": "https://gitea."~ domain ~"/user/oauth2/Authentik/callback",
       "icon": "https://gitea."~ domain ~"/assets/img/logo.svg",
@@ -42,9 +49,14 @@ entries:
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, openid]]
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, email]]
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, profile]]
+        {% if app == "Minio" -%}
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, minio]]
+        {%- endif %}
+
       redirect_uris:
         - matching_mode: strict
           url: {{ apps[app]["redirect_uri"] }}
+      # Necessary for JWKS to be generated correctly
       signing_key: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
 
   - identifiers:
