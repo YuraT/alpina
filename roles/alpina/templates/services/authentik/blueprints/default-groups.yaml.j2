@@ -1,0 +1,23 @@
+version: 1
+metadata:
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+  name: Alpina - Default Groups
+entries:
+  - identifiers:
+      name: "admins"
+    model: authentik_core.group
+    id: "admins"
+
+  - identifiers:
+      name: "users"
+    model: authentik_core.group
+    id: "users"
+
+  - identifiers:
+      name: "arrstack"
+    model: authentik_core.group
+    id: "arrstack"
+    attrs:
+      arrstack_username: "arr"
+      arrstack_password: "{{ arrstack_password }}"

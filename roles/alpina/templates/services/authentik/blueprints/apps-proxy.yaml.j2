@@ -4,61 +4,47 @@ metadata:
     blueprints.goauthentik.io/instantiate: "true"
   name: Alpina - Proxied Apps
 entries:
-  - identifiers:
-      name: arrstack
-    model: authentik_core.group
-    id: arrstack
-    attrs:
-      arrstack_username: "arr"
-      arrstack_password: "{{ arrstack_password }}"
-
-  # TODO: Probably refactor this into a jinja macro
+  # TODO: Possibly refactor this into a jinja macro (?)
   {% set apps = {
-    "uptime-kuma": {
+    "Uptime Kuma": {
       "host": "uptime",
-      "name": "Uptime Kuma",
       "icon": "https://uptime."~ domain ~"/icon.svg",
       "unauthenticated_paths": "^/icon.svg$",
-      "group": "Services",
-      "create_admin_group": true,
+      "ui_group": "Services",
+      "allowed_for_groups": ["admins"],
     },
-    "qbit": {
+    "qBit": {
       "host": "qbit",
-      "name": "qBit",
       "icon": "https://qbit."~ domain ~"/images/qbittorrent-tray.svg",
       "unauthenticated_paths": "^/images/qbittorrent-tray.svg$",
-      "group": "Arrstack",
-      "create_admin_group": false,
+      "ui_group": "Arrstack",
+      "allowed_for_groups": ["arrstack"],
     },
-    "prowlarr": {
+    "Prowlarr": {
       "host": "prowlarr",
-      "name": "Prowlarr",
       "icon": "https://prowlarr."~ domain ~"/Content/Images/logo.svg",
       "unauthenticated_paths": "^/Content/Images/logo.svg$",
-      "group": "Arrstack",
-      "create_admin_group": false,
+      "ui_group": "Arrstack",
+      "allowed_for_groups": ["arrstack"],
     },
-    "sonarr": {
+    "Sonarr": {
       "host": "sonarr",
-      "name": "Sonarr",
       "icon": "https://sonarr."~ domain ~"/Content/Images/logo.svg",
       "unauthenticated_paths": "^/Content/Images/logo.svg$",
-      "group": "Arrstack",
-      "create_admin_group": false,
+      "ui_group": "Arrstack",
+      "allowed_for_groups": ["arrstack"],
     },
-    "radarr": {
+    "Radarr": {
       "host": "radarr",
-      "name": "Radarr",
       "icon": "https://radarr."~ domain ~"/Content/Images/logo.svg",
       "unauthenticated_paths": "^/Content/Images/logo.svg$",
-      "group": "Arrstack",
-      "create_admin_group": false,
+      "ui_group": "Arrstack",
+      "allowed_for_groups": ["arrstack"],
     },
   } -%}
-
   {% for app in apps.keys() -%}
   - identifiers:
-      name: {{ apps[app]["name"] }}
+      name: {{ app }}
     model: authentik_providers_proxy.proxyprovider
     id: {{ app }}
     attrs:
@@ -68,39 +54,26 @@ entries:
       skip_path_regex: "{{ apps[app]["unauthenticated_paths"] }}"
 
   - identifiers:
-      slug: {{ app }}
+      slug: {{ app | lower | replace(" ", "-") }}
     model: authentik_core.application
+    id: app-{{ app }}
     attrs:
-      name: {{ apps[app]["name"] }}
-      group: {{ apps[app]["group"] }}
-      meta_description: "Hello, I'm {{ apps[app]["name"] }}!"
+      name: {{ app }}
+      group: {{ apps[app]["ui_group"] }}
+      meta_description: "Hello, I'm {{ app }}!"
       meta_publisher: Alpina
       icon: "{{ apps[app]["icon"] }}"
       open_in_new_tab: true
       provider: !KeyOf {{ app }}
 
-  {% if apps[app]["create_admin_group"] -%}
+  {% for group in apps[app]["allowed_for_groups"] -%}
   - identifiers:
-      name: "{{ apps[app]["name"] }} Admins"
-    model: authentik_core.group
-    id: "{{ app }} Admins"
-
-  - identifiers:
-      group: !KeyOf "{{ app }} Admins"
-      target: !Find [authentik_core.application, [ slug, {{ app }}] ]
+      group: !Find [authentik_core.group, [name, {{ group }}]]
+      target: !KeyOf app-{{ app }}
     model: authentik_policies.policybinding
     attrs:
-      order: 0
-  {% endif %}
-
-  {% if apps[app]["group"] == "Arrstack" -%}
-  - identifiers:
-      group: !KeyOf arrstack
-      target: !Find [authentik_core.application, [slug, {{ app }}]]
-    model: authentik_policies.policybinding
-    attrs:
-      order: 0
-  {% endif %}
+      order: 10
+  {% endfor %}
 
   {% endfor %}
 
