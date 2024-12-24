@@ -31,4 +31,4 @@ name_attribute_path = name
 
 # Optionally map user groups to Grafana roles
 allow_assign_grafana_admin = true
-role_attribute_path = contains(groups[*], 'Grafana Admins') && 'GrafanaAdmin' || 'Viewer'
+role_attribute_path = contains(groups[*], 'admins') && 'GrafanaAdmin' || 'Viewer'
