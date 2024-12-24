@@ -12,7 +12,7 @@ networks:
 
 services:
   traefik:
-    image: traefik:v3.0
+    image: traefik:v3.2
     container_name: traefik
     restart: unless-stopped
     env_file:
@@ -23,7 +23,6 @@ services:
       - ./rules:/rules:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - {{ base_volume_path }}/traefik/rules:/rules/extra:ro
-      - {{ base_volume_path }}/traefik/logs:/logs
       - {{ base_volume_path }}/traefik/acme:/acme
 
   # This is mostly just so that the traefik network gets created
