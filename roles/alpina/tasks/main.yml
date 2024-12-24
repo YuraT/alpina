@@ -31,4 +31,5 @@
       - nextcloud
       - jellyfin
       - arrstack
+      - vpgen
   import_tasks: deploy_collection.yml

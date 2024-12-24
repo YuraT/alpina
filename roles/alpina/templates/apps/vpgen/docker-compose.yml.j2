@@ -1,0 +1,16 @@
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
+
+networks:
+  {{ helpers.default_network(196) | indent(2) }}
+
+services:
+  vpgen:
+    image: gitea.cazzzer.com/cazzzer/vpgen:develop
+    container_name: vpgen
+    labels:
+      - {{ helpers.traefik_labels('vpgen', port='3000') | indent(6) }}
+    restart: unless-stopped
+    env_file:
+      - .env.vpgen
+    volumes:
+      - {{ base_volume_path }}/vpgen:/data

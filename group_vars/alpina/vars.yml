@@ -14,16 +14,16 @@ authentik_secret_key: "{{ vault_authentik_secret_key }}"
 authentik_sendgrid_api_key: "{{ vault_authentik_sendgrid_api_key }}"
 
 auth_grafana_client_secret: "{{ vault_auth_grafana_client_secret }}"
+auth_minio_client_secret: "{{ vault_auth_minio_client_secret }}"
 auth_gitea_client_secret: "{{ vault_auth_gitea_client_secret }}"
 auth_nextcloud_client_secret: "{{ vault_auth_nextcloud_client_secret }}"
-auth_minio_client_secret: "{{ vault_auth_minio_client_secret }}"
 arrstack_password: "{{ vault_arrstack_password }}"
+auth_vpgen_client_secret: "{{ vault_auth_vpgen_client_secret }}"
 
 # Minio
 minio_password: "{{ vault_minio_password }}"
 
 # Monitoring
-## auth_grafana_client_secret:
 influxdb_admin_password: "{{ vault_influxdb_admin_password }}"
 influxdb_admin_token: "{{ vault_influxdb_admin_token }}"
 
@@ -49,3 +49,15 @@ jwt_secret: "{{ vault_jwt_secret }}"
 nextcloud_db_password: "{{ vault_nextcloud_db_password }}"
 redis_password: "{{ vault_redis_password }}"
 nextcloud_sendgrid_api_key: "{{ vault_nextcloud_sendgrid_api_key }}"
+
+# VPGen
+vpgen_opnsense_api_url: https://opnsense.cazzzer.com
+vpgen_opnsense_api_key: "{{ vault_vpgen_opnsense_api_key }}"
+vpgen_opnsense_api_secret: "{{ vault_vpgen_opnsense_api_secret }}"
+vpgen_opnsense_wg_ifname: wg2
+
+vpgen_ipv6_client_prefix_size: 112
+vpgen_ip_max_index: 100
+vpgen_vpn_endpoint: "{{ vault_vpgen_vpn_endpoint }}"
+vpgen_vpn_dns: "{{ vault_vpgen_vpn_dns }}"
+vpgen_max_clients_per_user: 20

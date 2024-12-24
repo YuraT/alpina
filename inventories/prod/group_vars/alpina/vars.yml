@@ -12,3 +12,7 @@ fw_vpn_input_ports: "{{ vault_fw_vpn_input_ports }}"
 # Authentik GitHub OAuth
 github_consumer_key: 32d5cae58d744c56fcc9
 github_consumer_secret: "{{ vault_github_consumer_secret }}"
+
+# VPGen
+vpgen_ipv4_starting_addr: 10.18.11.100
+vpgen_ipv6_starting_addr: "{{ vault_vpgen_ipv6_starting_addr }}"

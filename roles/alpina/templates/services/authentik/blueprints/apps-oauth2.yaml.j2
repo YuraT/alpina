@@ -33,6 +33,13 @@ entries:
       "ui_group": "Apps",
       "allowed_for_groups": ["admins", "users"],
     },
+    "VPGen": {
+      "redirect_uri": "https://vpgen."~ domain ~"/auth/authentik/callback",
+      "icon": "https://vpgen."~ domain ~"/favicon.png",
+      "client_secret": auth_vpgen_client_secret,
+      "ui_group": "Apps",
+      "allowed_for_groups": ["admins", "users"],
+    },
   } -%}
   {% for app in apps.keys() -%}
   - identifiers:
