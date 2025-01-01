@@ -38,7 +38,7 @@ entries:
       "icon": "https://vpgen."~ domain ~"/favicon.png",
       "client_secret": auth_vpgen_client_secret,
       "ui_group": "Apps",
-      "allowed_for_groups": ["admins", "users"],
+      "allowed_for_groups": ["admins", "users", "vpgen"],
     },
   } -%}
   {% for app in apps.keys() -%}

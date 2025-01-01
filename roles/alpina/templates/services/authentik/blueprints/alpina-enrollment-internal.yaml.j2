@@ -93,7 +93,7 @@ entries:
     id: enrollment-user-write
     attrs:
       user_type: internal
-      create_users_group: !Find [authentik_core.group, [name, users]]
+      create_users_group: !Find [authentik_core.group, [name, {{ auth_default_enrollment_group }}]]
   - identifiers:
       name: alpina-enrollment-email-verify
     model: authentik_stages_email.emailstage

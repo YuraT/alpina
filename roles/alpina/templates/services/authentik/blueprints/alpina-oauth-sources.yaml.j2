@@ -76,4 +76,4 @@ entries:
     model: authentik_stages_user_write.userwritestage
     attrs:
       user_type: internal
-      create_users_group: !Find [authentik_core.group, [name, users]]
+      create_users_group: !Find [authentik_core.group, [name, {{ auth_default_enrollment_group }}]]

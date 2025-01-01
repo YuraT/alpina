@@ -10,7 +10,6 @@ traefik_subnet: 172.16.122.0
 # Authentik
 authentik_db_password: "{{ vault_authentik_db_password }}"
 authentik_secret_key: "{{ vault_authentik_secret_key }}"
-
 authentik_sendgrid_api_key: "{{ vault_authentik_sendgrid_api_key }}"
 
 auth_grafana_client_secret: "{{ vault_auth_grafana_client_secret }}"
@@ -19,6 +18,8 @@ auth_gitea_client_secret: "{{ vault_auth_gitea_client_secret }}"
 auth_nextcloud_client_secret: "{{ vault_auth_nextcloud_client_secret }}"
 arrstack_password: "{{ vault_arrstack_password }}"
 auth_vpgen_client_secret: "{{ vault_auth_vpgen_client_secret }}"
+
+auth_default_enrollment_group: vpgen
 
 # Minio
 minio_password: "{{ vault_minio_password }}"
