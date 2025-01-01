@@ -1,0 +1,225 @@
+version: 1
+metadata:
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+  name: Alpina - Enrollment by Invitation (Internal)
+entries:
+  # Flow for internal enrollment by invitation
+  - identifiers:
+      slug: enrollment-internal-invitation-flow
+    model: authentik_flows.flow
+    id: flow
+    attrs:
+      name: Alpina Enrollment Flow
+      title: Sign Up
+      designation: enrollment
+      authentication: require_unauthenticated
+
+  # Prompt fields
+  - identifiers:
+      name: alpina-enrollment-field-name
+    model: authentik_stages_prompt.prompt
+    id: prompt-field-name
+    attrs:
+      field_key: name
+      label: Name
+      type: text
+      required: true
+      placeholder: Name
+      placeholder_expression: false
+      order: 0
+  - identifiers:
+      name: alpina-enrollment-field-password
+    model: authentik_stages_prompt.prompt
+    id: prompt-field-password
+    attrs:
+      field_key: password
+      label: Password
+      type: password
+      required: true
+      placeholder: Password
+      placeholder_expression: false
+      order: 1
+  - identifiers:
+      name: alpina-enrollment-field-password-repeat
+    model: authentik_stages_prompt.prompt
+    id: prompt-field-password-repeat
+    attrs:
+      field_key: password_repeat
+      label: Password (repeat)
+      type: password
+      required: true
+      placeholder: Password (repeat)
+      placeholder_expression: false
+      order: 2
+
+  # Flow stages
+  - identifiers:
+      name: alpina-enrollment-invitation
+    model: authentik_stages_invitation.invitationstage
+    id: enrollment-invitation
+  - identifiers:
+      name: alpina-enrollment-identification-oauth
+    model: authentik_stages_identification.identificationstage
+    id: enrollment-identification-oauth
+    attrs:
+      user_fields:
+        - email
+      pretend_user_exists: true
+      show_matched_user: false
+      sources:
+        - !Find [authentik_sources_oauth.oauthsource, [slug, github-enrollment]]
+        - !Find [authentik_sources_oauth.oauthsource, [slug, google-enrollment]]
+  - identifiers:
+      name: alpina-enrollment-deny-existing-email
+    model: authentik_stages_deny.denystage
+    id: enrollment-deny-existing-email
+    attrs:
+      deny_message: "An account with this email already exists"
+  - identifiers:
+      name: alpina-enrollment-prompt-name-password
+    model: authentik_stages_prompt.promptstage
+    id: enrollment-prompt-name-password
+    attrs:
+      fields:
+        - !KeyOf prompt-field-name
+        - !KeyOf prompt-field-password
+        - !KeyOf prompt-field-password-repeat
+      validation_policies:
+        - !Find [authentik_policies_password.passwordpolicy, [name, default-password-change-password-policy]]
+  - identifiers:
+      name: alpina-enrollment-user-write
+    model: authentik_stages_user_write.userwritestage
+    id: enrollment-user-write
+    attrs:
+      user_type: internal
+      create_users_group: !Find [authentik_core.group, [name, users]]
+  - identifiers:
+      name: alpina-enrollment-email-verify
+    model: authentik_stages_email.emailstage
+    id: enrollment-email-verify
+    attrs:
+      use_global_settings: true
+      template: email/account_confirmation.html
+      activate_user_on_success: true
+  - identifiers:
+      name: alpina-enrollment-user-login
+    model: authentik_stages_user_login.userloginstage
+    id: enrollment-user-login
+
+  # Policies
+  - identifiers:
+      name: alpina-enrollment-invited-used-policy
+    model: authentik_policies_event_matcher.eventmatcherpolicy
+    id: enrollment-invited-used-policy
+    attrs:
+      action: invitation_used
+  - identifiers:
+      name: alpina-enrollment-unique-email-policy
+    model: authentik_policies_expression.expressionpolicy
+    id: enrollment-unique-email-policy
+    attrs:
+      expression: |
+        # https://docs.goauthentik.io/docs/customize/policies/expression/unique_email
+        from authentik.core.models import User
+        email = request.context["flow_plan"].context["pending_user"].email
+
+        if User.objects.filter(email=email).exists():
+          ak_message("Email address in use")
+          return False
+
+        if request.context["flow_plan"].context.get("prompt_data") is None:
+          request.context["flow_plan"].context["prompt_data"] = {}
+
+        request.context["flow_plan"].context["prompt_data"]["email"] = email
+        request.context["flow_plan"].context["prompt_data"]["username"] = email
+        return True
+
+  - identifiers:
+      name: alpina-enrollment-user-write-add-groups-policy
+    model: authentik_policies_expression.expressionpolicy
+    id: enrollment-user-write-add-groups-policy
+    attrs:
+        expression: |
+          # https://docs.goauthentik.io/docs/add-secure-apps/flows-stages/stages/user_write
+          from authentik.core.models import Group
+          ak_logger.info("Adding groups", request=request, prompt_data=request.context["prompt_data"], invitation=request.context.get("invitation"))
+
+          requested_groups = request.context["prompt_data"].get("alpina_add_groups")
+          if requested_groups is None:
+            return True
+
+          groups = []
+          for group_name in requested_groups:
+            group, _ = Group.objects.get_or_create(name=group_name)
+            groups.append(group)
+
+          # ["groups"] *must* be set to an array of Group objects, names alone are not enough.
+          request.context["flow_plan"].context["groups"] = groups
+          return True
+
+  # Flow stage bindings
+  - identifiers:
+      target: !KeyOf flow
+      stage: !KeyOf enrollment-invitation
+      order: 0
+    model: authentik_flows.flowstagebinding
+    id: enrollment-invitation-binding
+  - identifiers:
+      target: !KeyOf flow
+      stage: !KeyOf enrollment-identification-oauth
+      order: 1
+    model: authentik_flows.flowstagebinding
+  - identifiers:
+      target: !KeyOf flow
+      stage: !KeyOf enrollment-deny-existing-email
+      order: 2
+    model: authentik_flows.flowstagebinding
+    id: enrollment-deny-existing-email-binding
+  - identifiers:
+      target: !KeyOf flow
+      stage: !KeyOf enrollment-prompt-name-password
+      order: 10
+    model: authentik_flows.flowstagebinding
+  - identifiers:
+      target: !KeyOf flow
+      stage: !KeyOf enrollment-user-write
+      order: 20
+    model: authentik_flows.flowstagebinding
+    id: enrollment-user-write-binding
+  - identifiers:
+      target: !KeyOf flow
+      stage: !KeyOf enrollment-email-verify
+      order: 30
+    model: authentik_flows.flowstagebinding
+  - identifiers:
+      target: !KeyOf flow
+      stage: !KeyOf enrollment-user-login
+      order: 100
+    model: authentik_flows.flowstagebinding
+
+  # Stage policy bindings
+  # Log used invitations
+  - identifiers:
+      target: !KeyOf enrollment-invitation-binding
+      policy: !KeyOf enrollment-invited-used-policy
+      order: 0
+    model: authentik_policies.policybinding
+    attrs:
+      negate: true
+  # Deny existing email addresses
+  - identifiers:
+      target: !KeyOf enrollment-deny-existing-email-binding
+      policy: !KeyOf enrollment-unique-email-policy
+      order: 0
+    model: authentik_policies.policybinding
+    attrs:
+      negate: true
+  # Add groups to user from invitation "alpina_add_groups" field
+  # This only work for email sign up, as the invitation flow context isn't
+  # preserved for the default-source-enrollment flow
+  - identifiers:
+      target: !KeyOf enrollment-user-write-binding
+      policy: !KeyOf enrollment-user-write-add-groups-policy
+      order: 0
+    model: authentik_policies.policybinding

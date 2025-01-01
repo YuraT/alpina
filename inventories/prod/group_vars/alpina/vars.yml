@@ -9,9 +9,11 @@ wg_psk: "{{ vault_wg_psk }}"
 wg_addresses: "{{ vault_wg_addresses }}"
 fw_vpn_input_ports: "{{ vault_fw_vpn_input_ports }}"
 
-# Authentik GitHub OAuth
+# Authentik External OAuth
 github_consumer_key: 32d5cae58d744c56fcc9
 github_consumer_secret: "{{ vault_github_consumer_secret }}"
+google_consumer_key: 606830535764-9vc8mjta87g9974pb7qasp82cpoc1d3a.apps.googleusercontent.com
+google_consumer_secret: "{{ vault_google_consumer_secret }}"
 
 # VPGen
 vpgen_ipv4_starting_addr: 10.18.11.100

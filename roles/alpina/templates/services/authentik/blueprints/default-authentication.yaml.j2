@@ -48,7 +48,8 @@ entries:
       passwordless_flow: !Find [authentik_flows.flow, [slug, authentication-passwordless-flow]]
       sources:
         - !Find [authentik_core.source, [slug, authentik-built-in]]
-        - !Find [authentik_sources_oauth.oauthsource, [slug, github]]
+        - !Find [authentik_sources_oauth.oauthsource, [slug, github-auth]]
+        - !Find [authentik_sources_oauth.oauthsource, [slug, google-auth]]
 
     # Enable compatibility mode for the default authentication flow for better autofill support
   - identifiers:

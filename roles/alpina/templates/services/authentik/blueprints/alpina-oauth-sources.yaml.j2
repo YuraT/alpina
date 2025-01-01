@@ -1,0 +1,79 @@
+version: 1
+metadata:
+  labels:
+    blueprints.goauthentik.io/instantiate: "true"
+  name: Alpina - External OAuth
+entries:
+  {% set sources = {
+    "GitHub": {
+      "provider_type": "github",
+      "consumer_key": github_consumer_key,
+      "consumer_secret": github_consumer_secret,
+    },
+    "Google": {
+      "provider_type": "google",
+      "consumer_key": google_consumer_key,
+      "consumer_secret": google_consumer_secret,
+    },
+  } -%}
+  {% for source in sources.keys() -%}
+  - identifiers:
+      slug: {{ source | lower }}-auth
+    model: authentik_sources_oauth.oauthsource
+    attrs:
+      provider_type: {{ sources[source]["provider_type"] }}
+      name: {{ source }} (Auth Only)
+      consumer_key: {{ sources[source]["consumer_key"] }}
+      consumer_secret: {{ sources[source]["consumer_secret"] }}
+      user_matching_mode: email_link
+      user_path_template: goauthentik.io/sources/%(slug)s
+      authentication_flow: !Find [authentik_flows.flow, [slug, default-source-authentication]]
+  - identifiers:
+      slug: {{ source | lower }}-enrollment
+    model: authentik_sources_oauth.oauthsource
+    attrs:
+      provider_type: {{ sources[source]["provider_type"] }}
+      name: {{ source }} (Auth and Enrollment)
+      consumer_key: {{ sources[source]["consumer_key"] }}
+      consumer_secret: {{ sources[source]["consumer_secret"] }}
+      user_matching_mode: email_link
+      user_path_template: goauthentik.io/sources/%(slug)s
+      authentication_flow: !Find [authentik_flows.flow, [slug, default-source-authentication]]
+      enrollment_flow: !Find [authentik_flows.flow, [slug, default-source-enrollment]]
+  {% endfor %}
+
+  # Modify default source enrollment to use email as username
+  - identifiers:
+      slug: default-source-enrollment
+    model: authentik_flows.flow
+    id: source-enrollment-flow
+    attrs:
+      policy_engine_mode: all
+  - identifiers:
+      name: alpina-email-as-username-policy
+    model: authentik_policies_expression.expressionpolicy
+    id: email-as-username-policy
+    attrs:
+      expression: |
+        # https://docs.goauthentik.io/docs/users-sources/sources/social-logins/google/#username-mapping
+        email = request.context["prompt_data"].get("email")
+        # Direct set username to email
+        request.context["prompt_data"]["username"] = email
+        # Set username to email without domain
+        # request.context["prompt_data"]["username"] = email.split("@")[0]
+        return True
+  - identifiers:
+      policy: !KeyOf email-as-username-policy
+      target: !KeyOf source-enrollment-flow
+    model: authentik_policies.policybinding
+    attrs:
+      order: 0
+
+  # Modify default source enrollment to create internal users
+  # with the internal user type and the users group
+  - identifiers:
+      name: default-source-enrollment-write
+    model: authentik_stages_user_write.userwritestage
+    attrs:
+      user_type: internal
+      create_users_group: !Find [authentik_core.group, [name, users]]
