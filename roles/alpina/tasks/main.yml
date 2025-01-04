@@ -28,6 +28,7 @@
     collection: apps
     stacks:
       - gitea
+      - woodpecker
       - nextcloud
       - jellyfin
       - arrstack

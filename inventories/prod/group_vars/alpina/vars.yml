@@ -18,3 +18,7 @@ google_consumer_secret: "{{ vault_google_consumer_secret }}"
 # VPGen
 vpgen_ipv4_starting_addr: 10.18.11.100
 vpgen_ipv6_starting_addr: "{{ vault_vpgen_ipv6_starting_addr }}"
+
+# Woodpecker
+woodpecker_gitea_client_id: 3b7515f3-6005-4512-a2ee-5464dba315f8
+woodpecker_gitea_client_secret: "{{ vault_woodpecker_gitea_client_secret }}"

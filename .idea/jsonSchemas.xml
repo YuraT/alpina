@@ -108,6 +108,16 @@
                 <list>
                   <Item>
                     <option name="pattern" value="true" />
+                    <option name="path" value="*/compose.yml" />
+                    <option name="mappingKind" value="Pattern" />
+                  </Item>
+                  <Item>
+                    <option name="pattern" value="true" />
+                    <option name="path" value="*/compose.yml.j2" />
+                    <option name="mappingKind" value="Pattern" />
+                  </Item>
+                  <Item>
+                    <option name="pattern" value="true" />
                     <option name="path" value="*/docker-compose.yml" />
                     <option name="mappingKind" value="Pattern" />
                   </Item>

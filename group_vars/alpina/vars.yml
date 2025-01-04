@@ -62,3 +62,6 @@ vpgen_ip_max_index: 100
 vpgen_vpn_endpoint: "{{ vault_vpgen_vpn_endpoint }}"
 vpgen_vpn_dns: "{{ vault_vpgen_vpn_dns }}"
 vpgen_max_clients_per_user: 20
+
+# Woodpecker
+woodpecker_agent_secret: "{{ vault_woopecker_agent_secret }}"

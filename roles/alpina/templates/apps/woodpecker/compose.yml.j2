@@ -1,0 +1,35 @@
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
+
+networks:
+  {{ helpers.default_network(195) | indent(2) }}
+
+services:
+  woodpecker-server:
+    image: woodpeckerci/woodpecker-server:latest
+    container_name: woodpecker_server
+    labels:
+      - {{ helpers.traefik_labels('woodpecker', port='8000') | indent(6) }}
+    restart: unless-stopped
+    volumes:
+      - {{ base_volume_path }}/woodpecker/data:/var/lib/woodpecker
+    environment:
+      - WOODPECKER_OPEN=true
+      - WOODPECKER_HOST=https://woodpecker.{{ domain }}
+      - WOODPECKER_GITEA=true
+      - WOODPECKER_GITEA_URL=https://gitea.{{ domain }}
+      - WOODPECKER_GITEA_CLIENT={{ woodpecker_gitea_client_id }}
+      - WOODPECKER_GITEA_SECRET={{ woodpecker_gitea_client_secret }}
+      - WOODPECKER_AGENT_SECRET={{ woodpecker_agent_secret }}
+
+  woodpecker-agent:
+    image: woodpeckerci/woodpecker-agent:latest
+    container_name: woodpecker_agent
+    restart: unless-stopped
+    depends_on:
+      - woodpecker-server
+    volumes:
+      - {{ base_volume_path }}/woodpecker/agent_config:/etc/woodpecker
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WOODPECKER_SERVER=woodpecker-server:9000
+      - WOODPECKER_AGENT_SECRET={{ woodpecker_agent_secret }}
