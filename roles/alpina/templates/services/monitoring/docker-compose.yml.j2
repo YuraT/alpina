@@ -2,8 +2,6 @@
 
 networks:
   {{ helpers.default_network(251) | indent(2) }}
-  traefik_traefik:
-    external: true
 
 services:
   grafana:
@@ -17,9 +15,6 @@ services:
     restart: unless-stopped
     # Needed to make config files readable (not anymore, TODO: remove)
     user: "{{ remote_uid }}"
-    networks:
-      - default
-      - traefik_traefik
     volumes:
       - {{ base_volume_path }}/monitoring/grafana:/var/lib/grafana
       - ./grafana_config/grafana.ini:/etc/grafana/grafana.ini:ro
@@ -103,9 +98,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env.influxdb
-    networks:
-      - default
-      - traefik_traefik
     volumes:
       - {{ base_volume_path }}/monitoring/influxdb:/var/lib/influxdb2
 

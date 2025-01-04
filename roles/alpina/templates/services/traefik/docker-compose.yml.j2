@@ -1,14 +1,7 @@
 {% import 'contrib/compose_helpers.j2' as helpers with context %}
 
 networks:
-  traefik:
-    internal: true
-    enable_ipv6: true
-    ipam:
-      config:
-        # TODO: Consider removing traefik network, it shouldn't be needed with host networking
-        - subnet: {{ traefik_subnet }}/24
-        - subnet: {{ docker_ipv6_subnet | ansible.utils.ipsubnet(80, 255) }}
+  {{ helpers.default_network(254) | indent(2) }}
 
 services:
   traefik:
@@ -25,11 +18,8 @@ services:
       - {{ base_volume_path }}/traefik/rules:/rules/extra:ro
       - {{ base_volume_path }}/traefik/acme:/acme
 
-  # This is mostly just so that the traefik network gets created
   whoami:
     image: containous/whoami
     container_name: whoami
     labels:
-      - {{ helpers.traefik_labels('whoami', port=80) | indent(6) }}
-    networks:
-      - traefik
+      - {{ helpers.traefik_labels('whoami', port='80') | indent(6) }}

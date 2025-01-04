@@ -2,8 +2,6 @@
 
 networks:
   {{ helpers.default_network(253) | indent(2) }}
-  traefik_traefik:
-    external: true
 
 services:
   server:
@@ -21,9 +19,6 @@ services:
     command: server
     env_file:
       - .env.authentik
-    networks:
-      - default
-      - traefik_traefik
 
   worker:
     image: ghcr.io/goauthentik/server:latest

@@ -5,8 +5,6 @@ alpina_svc_path: ~/alpina
 base_volume_path: /mnt/dock
 media_volume_path: /mnt/media
 
-traefik_subnet: 172.16.122.0
-
 # Authentik
 authentik_db_password: "{{ vault_authentik_db_password }}"
 authentik_secret_key: "{{ vault_authentik_secret_key }}"

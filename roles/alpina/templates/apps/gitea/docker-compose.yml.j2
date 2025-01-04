@@ -2,8 +2,6 @@
 
 networks:
   {{ helpers.default_network(199) | indent(2) }}
-  traefik_traefik:
-    external: true
 
 services:
   server:
@@ -14,9 +12,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env.gitea
-    networks:
-      - default
-      - traefik_traefik
     volumes:
       - {{ base_volume_path }}/gitea/gitea:/data
     depends_on:
@@ -27,7 +22,5 @@ services:
     restart: unless-stopped
     env_file:
       - .env.db
-    networks:
-      - default
     volumes:
       - {{ base_volume_path }}/gitea/postgres:/var/lib/postgresql/data

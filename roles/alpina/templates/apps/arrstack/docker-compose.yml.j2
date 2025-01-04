@@ -2,8 +2,6 @@
 
 networks:
   {{ helpers.default_network(249) | indent(2) }}
-  traefik_traefik:
-    external: true
 
 services:
   gluetun:
@@ -16,9 +14,6 @@ services:
     env_file:
       - .env.gluetun
     restart: unless-stopped
-    networks:
-      - default
-      - traefik_traefik
     volumes:
       - {{ base_volume_path }}/arrstack/gluetun:/gluetun
 
@@ -49,9 +44,6 @@ services:
     restart: unless-stopped
     depends_on:
       - qbittorrent
-    networks:
-      - default
-      - traefik_traefik
     volumes:
       - {{ base_volume_path }}/arrstack/config/prowlarr:/config
 
@@ -63,9 +55,6 @@ services:
     restart: unless-stopped
     depends_on:
       - qbittorrent
-    networks:
-      - default
-      - traefik_traefik
     volumes:
       - {{ base_volume_path }}/arrstack/config/sonarr:/config
       - {{ base_volume_path }}/arrstack/downloads:/downloads
@@ -79,9 +68,6 @@ services:
     restart: unless-stopped
     depends_on:
       - qbittorrent
-    networks:
-      - default
-      - traefik_traefik
     volumes:
       - {{ base_volume_path }}/arrstack/config/radarr:/config
       - {{ base_volume_path }}/arrstack/downloads:/downloads

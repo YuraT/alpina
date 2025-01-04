@@ -2,9 +2,6 @@
 
 networks:
   {{ helpers.default_network(198) | indent(2) }}
-  traefik_traefik:
-    external: true
-
 
 services:
   app:
@@ -18,8 +15,6 @@ services:
       - redis
     env_file:
       - .env.nextcloud
-    networks:
-      - default
     volumes:
       - {{ base_volume_path }}/nextcloud/nextcloud:/var/www/html
       - {{ base_volume_path }}/nextcloud/nextcloud_config:/var/www/html/config
@@ -32,8 +27,6 @@ services:
     depends_on:
       - app
     entrypoint: /cron.sh
-    networks:
-      - default
     volumes:
       - {{ base_volume_path }}/nextcloud/nextcloud:/var/www/html
       - {{ base_volume_path }}/nextcloud/nextcloud_config:/var/www/html/config
@@ -42,16 +35,8 @@ services:
   notify_push:
     image: nextcloud:${NEXTCLOUD_VERSION}
     container_name: nextcloud_notify_push
-    {# TODO: Refactor this and minio -#}
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.nc-notify.rule=Host(`nc.{{ domain }}`) && PathPrefix(`/push`)
-      - traefik.http.routers.nc-notify.entrypoints=websecure
-      - traefik.http.routers.nc-notify.tls=true
-      - traefik.http.routers.nc-notify.tls.certresolver=letsencrypt
-      - traefik.http.routers.nc-notify.tls.domains.0.main={{ domain }}
-      - traefik.http.routers.nc-notify.tls.domains.0.sans=*.{{ domain }}
-      - traefik.http.services.nc-notify.loadbalancer.server.port=7867
+      - {{ helpers.traefik_labels('nc', port='7867', path_prefix='/push') | indent(6) }}
     restart: unless-stopped
     user: www-data
     env_file:
@@ -68,8 +53,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env.db
-    networks:
-      - default
     volumes:
       - {{ base_volume_path }}/nextcloud/db:/var/lib/postgresql/data
 
@@ -79,8 +62,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env.redis
-    networks:
-      - default
     command:
       - sh
       - -c

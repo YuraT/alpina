@@ -6,23 +6,38 @@ default:
       - subnet: {{ docker_ipv6_subnet | ansible.utils.ipsubnet(80, subnet_index) }}
 {% endmacro %}
 
-{% macro traefik_labels(host, service="", port="", auth=false) %}
+{% macro traefik_labels(host, port='', path_prefix='', auth=false, wildcard=false) %}
+{% set name = host ~ (wildcard * '-*') ~ path_prefix -%}
+{% set tls_base = domain %}
+{% if wildcard -%}
+  {% set tls_base = host ~ '.' ~ domain %}
+{%- endif -%}
+
 traefik.enable=true
-- traefik.http.routers.{{ host }}.rule=Host(`{{ host }}.{{ domain }}`)
-- traefik.http.routers.{{ host }}.entrypoints=web
-- traefik.http.routers.{{ host }}-tls.rule=Host(`{{ host }}.{{ domain }}`)
-- traefik.http.routers.{{ host }}-tls.entrypoints=websecure
-- traefik.http.routers.{{ host }}-tls.tls=true
-- traefik.http.routers.{{ host }}-tls.tls.certresolver=letsencrypt
-- traefik.http.routers.{{ host }}-tls.tls.domains.0.main={{ domain }}
-- traefik.http.routers.{{ host }}-tls.tls.domains.0.sans=*.{{ domain }}
-{% if service -%}
-- traefik.http.routers.{{ host }}.service={{ service }}
-{% endif %}
+- traefik.http.routers.r-{{ name }}.rule={{ host_rule(host, path_prefix, wildcard) }}
+- traefik.http.routers.r-{{ name }}.entrypoints=websecure
+- traefik.http.routers.r-{{ name }}.tls=true
+- traefik.http.routers.r-{{ name }}.tls.certresolver=letsencrypt
+- traefik.http.routers.r-{{ name }}.tls.domains.0.main={{ tls_base }}
+- traefik.http.routers.r-{{ name }}.tls.domains.0.sans=*.{{ tls_base }}
 {% if port -%}
-- traefik.http.services.{{ host }}.loadbalancer.server.port={{ port }}
+- traefik.http.routers.r-{{ name }}.service=svc-{{ name }}
+- traefik.http.services.svc-{{ name }}.loadbalancer.server.port={{ port }}
 {% endif %}
 {% if auth -%}
-- traefik.http.routers.{{ host }}-tls.middlewares=authentik@docker
+- traefik.http.routers.r-{{ name }}.middlewares=authentik@docker
 {% endif %}
+{% endmacro %}
+
+{% macro host_rule(host, path_prefix="", wildcard=false) %}
+{% if wildcard %}
+{# regular a.host prevents warnings from 'No domain found in rule HostRegexp' #}
+{# TODO: figure out this stupidity properly #}
+Host(`a.{{ host }}.{{ domain }}`) || HostRegexp(`^.+\.{{ host }}\.{{ domain | replace('.', '\.') }}$`)
+{%- else %}
+Host(`{{ host }}.{{ domain }}`)
+{%- endif %}
+{% if path_prefix -%}
+ && PathPrefix(`{{ path_prefix }}`)
+{%- endif %}
 {% endmacro %}

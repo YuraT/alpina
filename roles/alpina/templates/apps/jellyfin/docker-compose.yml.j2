@@ -2,8 +2,6 @@
 
 networks:
   {{ helpers.default_network(197) | indent(2) }}
-  traefik_traefik:
-    external: true
 
 services:
   jellyfin:
@@ -14,9 +12,6 @@ services:
     restart: unless-stopped
     env_file:
       - .env.jellyfin
-    networks:
-      - default
-      - traefik_traefik
     volumes:
       - {{ base_volume_path }}/jellyfin/config:/config
       - {{ base_volume_path }}/jellyfin/cache:/cache
