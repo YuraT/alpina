@@ -40,6 +40,13 @@ entries:
       "ui_group": "Apps",
       "allowed_for_groups": ["admins", "users", "vpgen"],
     },
+    "Pgrok": {
+      "redirect_uri": "https://pgrok."~ domain ~"/-/oidc/callback",
+      "icon": "https://pgrok."~ domain ~"/pgrok.svg",
+      "client_secret": auth_pgrok_client_secret,
+      "ui_group": "Apps",
+      "allowed_for_groups": ["admins", "users"],
+    },
   } -%}
   {% for app in apps.keys() -%}
   - identifiers:

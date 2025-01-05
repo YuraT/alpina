@@ -33,4 +33,5 @@
       - jellyfin
       - arrstack
       - vpgen
+      - pgrok
   import_tasks: deploy_collection.yml

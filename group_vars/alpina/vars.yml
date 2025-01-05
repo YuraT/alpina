@@ -16,6 +16,7 @@ auth_gitea_client_secret: "{{ vault_auth_gitea_client_secret }}"
 auth_nextcloud_client_secret: "{{ vault_auth_nextcloud_client_secret }}"
 arrstack_password: "{{ vault_arrstack_password }}"
 auth_vpgen_client_secret: "{{ vault_auth_vpgen_client_secret }}"
+auth_pgrok_client_secret: "{{ vault_auth_pgrok_client_secret }}"
 
 auth_default_enrollment_group: vpgen
 
@@ -63,3 +64,6 @@ vpgen_max_clients_per_user: 20
 
 # Woodpecker
 woodpecker_agent_secret: "{{ vault_woopecker_agent_secret }}"
+
+# Pgrok
+pgrok_db_password: "{{ vault_pgrok_db_password }}"

@@ -64,6 +64,14 @@
     state: enabled
     immediate: yes
 
+- name: Allow 2222 tcp for pgrok ssh tunnel
+  become: yes
+  firewalld:
+    port: 2222/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
 - name: Reboot if needed
   become: yes
   ansible.builtin.reboot:

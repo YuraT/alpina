@@ -1,0 +1,31 @@
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
+
+networks:
+  {{ helpers.default_network(194) | indent(2) }}
+
+#  https://github.com/pgrok/pgrok/blob/main/docs/admin/docker.md#docker-compose
+services:
+  server:
+    image: ghcr.io/pgrok/pgrokd:latest
+    container_name: pgrok_server
+    labels:
+      - {{ helpers.traefik_labels('pgrok', port='3320') | indent(6) }}
+      - {{ helpers.traefik_labels('pgrok', port='3000', wildcard=true) | indent(6) }}
+    restart: unless-stopped
+    volumes:
+      - ./pgrokd.yml:/var/opt/pgrokd/pgrokd.yml
+    ports:
+      - "2222:2222"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17-alpine
+    container_name: pgrok_db
+    restart: unless-stopped
+    volumes:
+      - {{ base_volume_path }}/pgrok/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: pgrok
+      POSTGRES_USER: pgrok
+      POSTGRES_PASSWORD: "{{ pgrok_db_password }}"

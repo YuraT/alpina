@@ -1,0 +1,29 @@
+external_url: "https://pgrok.{{ domain }}"
+web:
+  port: 3320
+proxy:
+  port: 3000
+  scheme: https
+  domain: "pgrok.{{ domain }}"
+sshd:
+  port: 2222
+
+database:
+  host: db
+  port: 5432
+  user: pgrok
+  password: "{{ pgrok_db_password }}"
+  database: pgrok
+
+identity_provider:
+  type: oidc
+  display_name: Authentik
+  issuer: "https://auth.{{ domain }}/application/o/pgrok/"
+  client_id: "pgrok"
+  client_secret: "{{ auth_pgrok_client_secret }}"
+  field_mapping:
+    identifier: "preferred_username"
+    display_name: "name"
+    email: "email"
+# # The required domain name, "field_mapping.email" is required to set for this to work.
+  #  required_domain: "example.com"
