@@ -1,6 +1,8 @@
 # Environment specific variables (staging)
 
 ---
+domain: lab.cazzzer.com
+
 docker_ipv6_index: 254
 
 # Arrstack VPN

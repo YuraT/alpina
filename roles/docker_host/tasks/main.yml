@@ -1,12 +1,5 @@
-- name: Get IPv6 subnet for Docker
-  set_fact:
-    docker_ipv6_subnet: "{{ \
-      ansible_default_ipv6.address \
-      | ansible.utils.ipsubnet(64) \
-      | ansible.utils.ipsubnet(72, docker_ipv6_index) \
-    }}"
-
-- debug:
+- name: IPv6 subnet for Docker
+  debug:
     var: docker_ipv6_subnet
 
 - name: Configure Docker daemon
@@ -34,33 +27,6 @@
     immediate: yes
     state: disabled
   register: docker0_firewalld
-
-- name: Get list of running Docker containers
-  docker_host_info:
-    containers: yes
-  register: docker_container_list
-  when: clean_desired is true
-
-- name: Stop all running Docker containers
-  docker_container:
-    name: "{{ item }}"
-    state: stopped
-  loop: "{{ docker_container_list.containers | map(attribute='Id') | list }}"
-  async: 300
-  poll: 0
-  when: clean_desired is true and docker_container_list.containers | length > 0
-
-- name: Prune all Docker containers and networks
-  docker_prune:
-    containers: yes
-    networks: yes
-  when: clean_desired is true
-
-- name: Clean alpina directory
-  file:
-    path: "{{ alpina_svc_path }}"
-    state: absent
-  when: clean_desired is true
 
 - name: Restart Docker daemon
   become: yes

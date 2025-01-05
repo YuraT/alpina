@@ -31,7 +31,8 @@ services:
       - -config.file=/etc/loki/loki-config.yaml
     # Port forward is needed because not possible to resolve the container name from the host network
     ports:
-      - 3100:3100
+      - "127.0.0.1:3100:3100"
+      - "[::1]:3100:3100"
     volumes:
       - {{ base_volume_path }}/monitoring/loki:/loki
       - ./loki_config:/etc/loki:ro

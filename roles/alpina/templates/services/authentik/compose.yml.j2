@@ -15,7 +15,8 @@ services:
     restart: unless-stopped
     # Port forward is needed because traefik can't resolve the container name from the host network
     ports:
-      - "9000:9000"
+      - "127.0.0.1:9000:9000"
+      - "[::1]:9000:9000"
     command: server
     env_file:
       - .env.authentik

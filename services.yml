@@ -1,6 +1,5 @@
 - hosts: alpina
   roles:
-    - docker_host
     - alpina
   post_tasks:
     - name: Docker prune objects

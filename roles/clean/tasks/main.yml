@@ -1,0 +1,22 @@
+- name: Get list of running Docker containers
+  docker_host_info:
+    containers: yes
+  register: docker_container_list
+
+- name: Stop all running Docker containers
+  docker_container:
+    name: "{{ item }}"
+    state: stopped
+  loop: "{{ docker_container_list.containers | map(attribute='Id') | list }}"
+  async: 300
+  poll: 0
+
+- name: Prune all Docker containers and networks
+  docker_prune:
+    containers: yes
+    networks: yes
+
+- name: Clean alpina directory
+  file:
+    path: "{{ alpina_svc_path }}"
+    state: absent

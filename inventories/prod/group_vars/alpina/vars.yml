@@ -1,6 +1,8 @@
 # Environment specific variables (prod)
 
 ---
+domain: cazzzer.com
+
 docker_ipv6_index: 255
 
 # Arrstack VPN
