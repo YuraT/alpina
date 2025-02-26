@@ -32,7 +32,7 @@
     state: enabled
     immediate: yes
 
-- name: Allow Web
+- name: Disallow Web
   become: yes
   firewalld:
     service: http
@@ -68,6 +68,14 @@
   become: yes
   firewalld:
     port: 2222/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- name: Allow Syncthing
+  become: yes
+  firewalld:
+    service: syncthing
     permanent: yes
     state: enabled
     immediate: yes

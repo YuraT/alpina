@@ -29,6 +29,7 @@
     stacks:
       - gitea
       - woodpecker
+      - syncthing
       - nextcloud
       - jellyfin
       - arrstack

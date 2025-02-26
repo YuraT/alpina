@@ -1,0 +1,16 @@
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
+
+networks:
+  {{ helpers.default_network(193) | indent(2) }}
+
+services:
+  syncthing:
+    image: linuxserver/syncthing
+    container_name: syncthing
+    labels:
+      - {{ helpers.traefik_labels('sync', port='8384', auth=true) | indent(6) }}
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - {{ base_volume_path }}/syncthing/config:/config
+      - {{ base_volume_path }}/syncthing/data:/data
