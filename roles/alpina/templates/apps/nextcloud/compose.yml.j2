@@ -5,7 +5,7 @@ networks:
 
 services:
   app:
-    image: nextcloud:${NEXTCLOUD_VERSION}
+    image: &nextcloud_image nextcloud:stable-apache
     container_name: nextcloud_app
     labels:
       - {{ helpers.traefik_labels('nc', port='80') | indent(6) }}
@@ -21,7 +21,7 @@ services:
       - {{ base_volume_path }}/nextcloud/nextcloud_data:/var/www/html/data
 
   cron:
-    image: nextcloud:${NEXTCLOUD_VERSION}
+    image: *nextcloud_image
     container_name: nextcloud_cron
     restart: unless-stopped
     depends_on:
@@ -33,7 +33,7 @@ services:
       - {{ base_volume_path }}/nextcloud/nextcloud_data:/var/www/html/data
 
   notify_push:
-    image: nextcloud:${NEXTCLOUD_VERSION}
+    image: *nextcloud_image
     container_name: nextcloud_notify_push
     labels:
       - {{ helpers.traefik_labels('nc', port='7867', path_prefix='/push') | indent(6) }}
