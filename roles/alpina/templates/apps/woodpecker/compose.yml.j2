@@ -5,7 +5,7 @@ networks:
 
 services:
   woodpecker-server:
-    image: woodpeckerci/woodpecker-server:latest
+    image: woodpeckerci/woodpecker-server:v3
     container_name: woodpecker_server
     labels:
       - {{ helpers.traefik_labels('woodpecker', port='8000') | indent(6) }}
@@ -22,7 +22,7 @@ services:
       - WOODPECKER_AGENT_SECRET={{ woodpecker_agent_secret }}
 
   woodpecker-agent:
-    image: woodpeckerci/woodpecker-agent:latest
+    image: woodpeckerci/woodpecker-agent:v3
     container_name: woodpecker_agent
     restart: unless-stopped
     depends_on:
