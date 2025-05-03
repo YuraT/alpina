@@ -57,6 +57,8 @@ redis_password: "{{ vault_redis_password }}"
 nextcloud_sendgrid_api_key: "{{ vault_nextcloud_sendgrid_api_key }}"
 
 # VPGen
+vpgen_auth_invite_token: "{{ vault_vpgen_auth_invite_token }}"
+
 vpgen_opnsense_api_url: https://opnsense.cazzzer.com
 vpgen_opnsense_api_key: "{{ vault_vpgen_opnsense_api_key }}"
 vpgen_opnsense_api_secret: "{{ vault_vpgen_opnsense_api_secret }}"
