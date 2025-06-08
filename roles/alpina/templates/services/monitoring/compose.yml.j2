@@ -22,7 +22,7 @@ services:
 {#      - ./grafana_config:/etc/grafana:ro#}
 
   loki:
-    image: grafana/loki:3.4
+    image: grafana/loki:3.5
     container_name: loki
     restart: unless-stopped
     # Needed to make config files readable (not anymore, TODO: remove)
@@ -40,7 +40,7 @@ services:
       - /tmp/loki
 
   promtail:
-    image: grafana/promtail:3.4
+    image: grafana/promtail:3.5
     container_name: promtail
     restart: unless-stopped
     command:
