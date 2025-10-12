@@ -80,6 +80,30 @@
     state: enabled
     immediate: yes
 
+- name: Allow 25565 tcp for minecruft
+  become: yes
+  firewalld:
+    port: 25565/tcp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- name: Allow 25565 udp for minecruft
+  become: yes
+  firewalld:
+    port: 25565/udp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
+- name: Allow 24454 udp for minecruft voice chat
+  become: yes
+  firewalld:
+    port: 24454/udp
+    permanent: yes
+    state: enabled
+    immediate: yes
+
 - name: Reboot if needed
   become: yes
   ansible.builtin.reboot:

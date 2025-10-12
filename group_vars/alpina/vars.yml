@@ -75,3 +75,7 @@ woodpecker_agent_secret: "{{ vault_woopecker_agent_secret }}"
 
 # Pgrok
 pgrok_db_password: "{{ vault_pgrok_db_password }}"
+
+# Minecruft
+
+minecruft_cf_api_key: "{{ vault_minecruft_cf_api_key }}"
