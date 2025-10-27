@@ -6,8 +6,10 @@ services:
       - 25565:25565
       - 25565:25565/udp
       - 24454:24454/udp
+      - 8100:8100
     restart: unless-stopped
     env_file: .env.minecruft
     volumes:
       - {{ base_volume_path }}/minecruft/data:/data
-      - {{ base_volume_path }}/minecruft/downloads:/downloads
+      - {{ base_volume_path }}/minecruft/downloads:/
+      - {{ base_volume_path }}/minecruft/config:/config
