@@ -18,22 +18,22 @@
     collection: services
     stacks:
       - traefik
-      - monitoring
-      - authentik
-      - minio
+#      - monitoring
+#      - authentik
+#      - minio
   import_tasks: deploy_collection.yml
 
 - name: Deploy collection apps
   vars:
     collection: apps
     stacks:
-      - gitea
-      - woodpecker
-      - syncthing
-      - nextcloud
-      - jellyfin
-      - arrstack
-      - vpgen
-      - pgrok
+#      - gitea
+#      - woodpecker
+#      - syncthing
+#      - nextcloud
+#      - jellyfin
+#      - arrstack
+#      - vpgen
+#      - pgrok
       - minecruft
   import_tasks: deploy_collection.yml
