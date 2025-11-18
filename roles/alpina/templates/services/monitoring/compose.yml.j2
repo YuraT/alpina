@@ -22,7 +22,7 @@ services:
 {#      - ./grafana_config:/etc/grafana:ro#}
 
   loki:
-    image: grafana/loki:3.5
+    image: grafana/loki:3.6
     container_name: loki
     restart: unless-stopped
     # Needed to make config files readable (not anymore, TODO: remove)
