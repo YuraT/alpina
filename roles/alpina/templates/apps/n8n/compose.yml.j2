@@ -1,0 +1,24 @@
+{% import 'contrib/compose_helpers.j2' as helpers with context %}
+
+networks:
+  {{ helpers.default_network(192) | indent(2) }}
+
+services:
+  n8n:
+    image: n8nio/n8n
+    container_name: n8n
+    labels:
+      - {{ helpers.traefik_labels('n8n', port='5678') | indent(6) }}
+    restart: unless-stopped
+    volumes:
+      - {{ base_volume_path }}/n8n/data:/home/node/.n8n
+      - {{ base_volume_path }}/n8n/local-files:/files
+    environment:
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_HOST=n8n.{{ domain }}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - N8N_RUNNERS_ENABLED=true
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://n8n.{{ domain }}/
+      - N8N_PROXY_HOPS=1

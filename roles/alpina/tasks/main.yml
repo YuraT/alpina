@@ -35,5 +35,6 @@
       - arrstack
       - vpgen
       - pgrok
+      - n8n
       - minecruft
   import_tasks: deploy_collection.yml
