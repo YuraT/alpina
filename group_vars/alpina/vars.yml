@@ -6,7 +6,7 @@ base_volume_path: /mnt/dock
 media_volume_path: /mnt/media
 
 docker_ipv6_subnet: "{{ \
-          ansible_default_ipv6.address \
+          ansible_facts['default_ipv6'].address \
           | ansible.utils.ipsubnet(64) \
           | ansible.utils.ipsubnet(72, docker_ipv6_index) \
         }}"
