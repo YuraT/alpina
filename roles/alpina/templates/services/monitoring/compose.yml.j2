@@ -77,7 +77,7 @@ services:
       - /:/host:ro,rslave
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: ghcr.io/google/cadvisor:v0.53.0
     container_name: cadvisor
     restart: unless-stopped
     command:
