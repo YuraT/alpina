@@ -5,7 +5,7 @@ networks:
 
 services:
   server:
-    image: ghcr.io/goauthentik/server:latest
+    image: &authentik_image ghcr.io/goauthentik/server:2026.5
     container_name: authentik_server
     labels:
       - {{ helpers.traefik_labels('auth', port='9000') | indent(6) }}
@@ -22,7 +22,7 @@ services:
       - .env.authentik
 
   worker:
-    image: ghcr.io/goauthentik/server:latest
+    image: *authentik_image
     container_name: authentik_worker
     restart: unless-stopped
     command: worker
