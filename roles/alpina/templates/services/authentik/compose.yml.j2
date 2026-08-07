@@ -5,7 +5,7 @@ networks:
 
 services:
   server:
-    image: &authentik_image ghcr.io/goauthentik/server:2026.5
+    image: &authentik_image ghcr.io/goauthentik/server:2026.8
     container_name: authentik_server
     labels:
       - {{ helpers.traefik_labels('auth', port='9000') | indent(6) }}
