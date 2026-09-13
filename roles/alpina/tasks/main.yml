@@ -20,7 +20,7 @@
       - traefik
       - monitoring
       - authentik
-      - minio
+      # - minio
   import_tasks: deploy_collection.yml
 
 - name: Deploy collection apps
