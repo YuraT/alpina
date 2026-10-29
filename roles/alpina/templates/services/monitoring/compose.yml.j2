@@ -92,7 +92,7 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
 
   influxdb:
-    image: influxdb:2.7-alpine
+    image: influxdb:2.9-alpine
     container_name: influxdb
     labels:
       - {{ helpers.traefik_labels('influxdb', port='8086') | indent(6) }}
